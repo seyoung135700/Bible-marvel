@@ -9,17 +9,23 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--gold:#f0c040;--blue:#4fc3f7;--green:#2ecc71;--red:#e74c3c;--bg:#0d1117;--sur:#161b22;--sur2:#1c2128;--bor:#30363d;--text:#e6edf3;--muted:#8b949e;--font:'Noto Sans KR',sans-serif}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden}
-#app{height:100vh;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+#app{height:100vh;display:flex;flex-direction:column;max-width:500px;margin:0 auto;position:relative}
 .screen{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .gone{display:none!important}
+
+/* LOBBY */
 #lobby{background:radial-gradient(ellipse at 50% 30%,#1a2a4a,#0d1117);justify-content:center;align-items:center;padding:32px 24px}
 .logo{font-size:72px;margin-bottom:8px;animation:fl 3s ease-in-out infinite}
 @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .title{font-size:38px;font-weight:900;color:var(--gold);letter-spacing:-1px;text-shadow:0 0 30px #f0c04060}
 .sub{color:var(--muted);font-size:13px;margin-top:4px;margin-bottom:40px}
 .lbtns{width:100%;display:flex;flex-direction:column;gap:14px}
-#setup{padding:24px;justify-content:center;gap:14px}
-.backbtn{position:absolute;top:16px;left:16px;background:none;border:none;color:var(--muted);font-size:28px;cursor:pointer;z-index:10}
+
+/* SETUP */
+#setup{padding:24px;justify-content:center;gap:14px;position:relative}
+.backbtn{position:absolute;top:16px;left:16px;background:none;border:none;color:var(--muted);font-size:28px;cursor:pointer}
+
+/* BUTTONS */
 .btn{border:none;border-radius:14px;padding:15px 20px;font-size:17px;font-weight:700;cursor:pointer;font-family:var(--font);width:100%;transition:transform .1s,opacity .1s;-webkit-tap-highlight-color:transparent}
 .btn:active{transform:scale(.97);opacity:.85}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
@@ -27,50 +33,103 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .bblue{background:var(--blue);color:#0d1117}
 .bgreen{background:var(--green);color:#fff}
 .bgray{background:#2d333b;color:var(--text)}
-.bsm{padding:11px 16px;font-size:15px;border-radius:11px}
+.bred{background:var(--red);color:#fff}
+.bsm{padding:11px 16px;font-size:14px;border-radius:11px}
 .brow{display:flex;gap:10px}
 .brow .btn{flex:1}
 .inp{background:var(--sur2);border:1px solid var(--bor);border-radius:12px;padding:14px 16px;color:var(--text);font-size:16px;font-family:var(--font);outline:none;width:100%}
 .inp:focus{border-color:var(--gold)}
 .inp::placeholder{color:var(--muted)}
-#game{overflow:hidden}
-.ghdr{background:var(--sur);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bor);flex-shrink:0}
-.gtitle{font-weight:900;color:var(--gold);font-size:17px}
-.rbadge{background:#0f3460;color:var(--blue);font-size:12px;padding:4px 12px;border-radius:20px;font-weight:700}
-.tbar{padding:9px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bor);flex-shrink:0}
+
+/* GAME HEADER */
+.ghdr{background:var(--sur);padding:8px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bor);flex-shrink:0;gap:8px}
+.gtitle{font-weight:900;color:var(--gold);font-size:15px;flex-shrink:0}
+.rbadge{background:#0f3460;color:var(--blue);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;flex-shrink:0}
+.timer-box{background:#1a2a1a;border:1px solid var(--green);color:var(--green);font-size:13px;font-weight:900;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.timer-box.warn{background:#2a1a1a;border-color:var(--red);color:var(--red)}
+
+/* TURN BAR */
+.tbar{padding:8px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bor);flex-shrink:0}
 .tbar.myturn{background:linear-gradient(90deg,#1a3a1a,#162e16)}
 .tbar.other{background:var(--sur2)}
-.mybadge{background:var(--green);color:#fff;font-size:11px;font-weight:900;padding:4px 12px;border-radius:20px}
+.mybadge{background:var(--green);color:#fff;font-size:11px;font-weight:900;padding:3px 10px;border-radius:20px;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+
+/* TABS */
 .tabs{display:flex;border-bottom:1px solid var(--bor);flex-shrink:0}
-.tab{flex:1;padding:10px 0;background:none;border:none;color:var(--muted);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent}
+.tab{flex:1;padding:9px 0;background:none;border:none;color:var(--muted);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent}
 .tab.on{color:var(--gold);border-bottom-color:var(--gold);background:var(--sur)}
-.tc{flex:1;overflow-y:auto;padding:14px}
-.abar{padding:14px;border-top:1px solid var(--bor);flex-shrink:0;background:var(--bg)}
+.tc{flex:1;overflow-y:auto;padding:12px}
+
+/* ACTION BAR */
+.abar{padding:12px 14px;border-top:1px solid var(--bor);flex-shrink:0;background:var(--bg)}
 .pplay{display:flex;flex-direction:column;flex:1;overflow:hidden}
-.card{background:var(--sur);border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--bor)}
-.card.hl{border-color:var(--gold)}
-.sq{display:flex;align-items:center;gap:8px;background:var(--sur);border-radius:9px;padding:7px 10px;margin-bottom:5px;border:1px solid transparent}
-.sq.mine{border-color:var(--gold);background:#1e2a10}
-.sq.here{border-color:#fff;background:#1a2030}
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.sc{background:var(--sur);border-radius:11px;padding:10px 12px}
-.sc label{font-size:11px;color:var(--muted);display:block}
-.sc b{font-size:17px;font-weight:900}
-.loge{background:var(--sur);border-radius:8px;padding:8px 11px;margin-bottom:5px;font-size:13px;color:#c9d1d9;line-height:1.5}
-.dbox{display:inline-block;font-size:30px;background:var(--sur);padding:8px 24px;border-radius:20px;margin-bottom:10px}
-.dbox.dbl{color:var(--gold);border:1px solid var(--gold)}
-.wp{background:var(--sur);border-radius:11px;padding:11px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px;border:1px solid var(--bor)}
-.rrow{display:flex;align-items:center;gap:10px;background:var(--sur);border-radius:10px;padding:9px 12px;margin-bottom:6px}
-.mov{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:100;max-width:480px;margin:0 auto}
-.mo{background:var(--sur);border-radius:22px 22px 0 0;padding:24px 20px 32px;width:100%;border-top:1px solid var(--bor)}
+
+/* BOARD TAB - 보드판 스타일 */
+.board-wrap{padding:8px}
+.player-summary{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pscard{border-radius:10px;padding:8px 10px;border:1px solid transparent;min-width:80px}
+.pscard.active{border-color:var(--gold)}
+
+/* 보드 섹션 */
+.board-section{margin-bottom:12px}
+.section-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;padding-left:4px}
+.sq-row{display:flex;gap:4px;flex-wrap:wrap}
+.sq{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;padding:6px 4px;border:2px solid transparent;cursor:default;min-width:52px;flex:1;position:relative;transition:transform .15s}
+.sq.land{background:var(--sur);border-color:var(--bor)}
+.sq.land.mine{background:#1a2e0a;border-color:var(--green)}
+.sq.land.others{background:#1a1a2e;border-color:var(--blue)}
+.sq.here{transform:scale(1.08);box-shadow:0 0 12px #f0c04080}
+.sq.special{background:linear-gradient(135deg,#1a2040,#0a1530);border-color:#4a6080}
+.sq.key-sq{background:linear-gradient(135deg,#2a2010,#1a1508);border-color:#a07820}
+.sq-name{font-size:10px;font-weight:700;text-align:center;line-height:1.2;margin-bottom:2px}
+.sq-price{font-size:9px;color:var(--blue);font-weight:700}
+.sq-players{display:flex;gap:1px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.sq-owner{font-size:8px;position:absolute;top:3px;right:3px}
+.sq-stars{font-size:8px;color:#ffd700}
+.sq-icon{font-size:16px;margin-bottom:2px}
+
+/* 주사위 */
+.dice-area{text-align:center;margin-bottom:10px}
+.dice-wrap{display:flex;gap:16px;justify-content:center;margin-bottom:8px}
+.die{width:56px;height:56px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 15px rgba(0,0,0,.5);transition:transform .3s;border:3px solid #ddd}
+.die.rolling{animation:roll .4s ease-in-out}
+.die.double{border-color:var(--gold);box-shadow:0 4px 20px #f0c04060}
+@keyframes roll{0%{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.2)}100%{transform:rotate(360deg) scale(1)}}
+.double-badge{background:var(--gold);color:#1a1a2e;font-size:12px;font-weight:900;padding:3px 12px;border-radius:20px;display:inline-block;margin-bottom:6px}
+
+/* CARDS */
+.card{background:var(--sur);border-radius:12px;padding:11px 13px;margin-bottom:7px;border:1px solid var(--bor)}
+.card.hl{border-color:var(--gold);background:#1e1a08}
+
+/* LOG */
+.loge{background:var(--sur);border-radius:8px;padding:7px 10px;margin-bottom:4px;font-size:12px;color:#c9d1d9;line-height:1.5}
+
+/* RANK */
+.rrow{display:flex;align-items:center;gap:10px;background:var(--sur);border-radius:10px;padding:8px 11px;margin-bottom:5px}
+
+/* SPINNER */
 .spin{display:inline-block;width:20px;height:20px;border:3px solid var(--bor);border-top-color:var(--gold);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-::-webkit-scrollbar{width:4px}
+
+/* MODAL */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:flex-end;justify-content:center;z-index:100;max-width:500px;margin:0 auto}
+.mo{background:#1c2128;border-radius:22px 22px 0 0;padding:24px 20px 32px;width:100%;border-top:1px solid var(--bor);max-height:80vh;overflow-y:auto}
+.mo-title{font-size:18px;font-weight:900;color:var(--gold);margin-bottom:12px}
+
+/* KEY CARD POPUP */
+.key-card{background:linear-gradient(135deg,#2a2010,#1a1508);border:2px solid #a07820;border-radius:16px;padding:20px;text-align:center;margin-bottom:14px}
+.key-card-icon{font-size:48px;margin-bottom:8px}
+.key-card-text{font-size:15px;line-height:1.6;color:var(--text)}
+
+::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--bor);border-radius:4px}
 </style>
 </head>
 <body>
 <div id="app">
+
+<!-- LOBBY -->
 <div id="lobby" class="screen">
   <div class="logo">📖</div>
   <div class="title">성경마블</div>
@@ -81,59 +140,80 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   </div>
 </div>
 
+<!-- SETUP -->
 <div id="setup" class="screen gone">
   <button class="backbtn" id="bback">←</button>
   <div style="font-size:56px;text-align:center" id="sico">🏠</div>
-  <div style="font-size:26px;font-weight:900;color:var(--gold);text-align:center" id="stitle">방 만들기</div>
+  <div style="font-size:24px;font-weight:900;color:var(--gold);text-align:center" id="stitle">방 만들기</div>
   <input class="inp" id="ni" placeholder="닉네임 입력" maxlength="10">
   <div id="ri" class="gone"><input class="inp" id="rc" placeholder="방 코드 5자리" maxlength="5"></div>
+  <!-- 시간 설정 (방 만들기에서만) -->
+  <div id="time-wrap" style="background:var(--sur2);border:1px solid var(--bor);border-radius:12px;padding:14px 16px">
+    <div style="color:var(--muted);font-size:12px;margin-bottom:8px">⏱️ 게임 제한 시간</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn bsm bgray time-opt" data-min="0" style="flex:none;width:auto;padding:8px 14px">제한없음</button>
+      <button class="btn bsm bgray time-opt" data-min="30" style="flex:none;width:auto;padding:8px 14px">30분</button>
+      <button class="btn bsm bgray time-opt" data-min="60" style="flex:none;width:auto;padding:8px 14px">1시간</button>
+      <button class="btn bsm bgray time-opt" data-min="90" style="flex:none;width:auto;padding:8px 14px">1시간30분</button>
+      <button class="btn bsm bgray time-opt" data-min="120" style="flex:none;width:auto;padding:8px 14px">2시간</button>
+    </div>
+  </div>
   <button class="btn gold" id="sbtn">방 생성</button>
   <div id="sld" class="gone" style="text-align:center"><div class="spin"></div></div>
   <div id="serr" style="color:var(--red);font-size:13px;text-align:center;display:none"></div>
 </div>
 
+<!-- GAME -->
 <div id="game" class="screen gone">
   <div class="ghdr">
     <span class="gtitle">📖 성경마블</span>
+    <span class="timer-box gone" id="timer-disp">--:--</span>
     <span class="rbadge" id="rbadge">----</span>
   </div>
+
+  <!-- WAITING -->
   <div id="pwait" class="gone" style="padding:16px;overflow-y:auto">
-    <div style="color:var(--muted);font-size:13px;margin-bottom:12px">친구들에게 방 코드를 알려주세요! 🎉</div>
+    <div style="color:var(--muted);font-size:13px;margin-bottom:12px">👥 친구들에게 방 코드를 알려주세요!</div>
     <div id="wplayers"></div>
+    <div id="wtime-info" style="background:var(--sur2);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:13px;color:var(--muted)"></div>
     <button class="btn gold gone" id="bstart" style="margin-top:12px">🎮 게임 시작!</button>
     <div id="whint" class="gone" style="color:var(--muted);font-size:13px;text-align:center;margin-top:16px">방장이 게임을 시작할 때까지 대기 중...</div>
   </div>
+
+  <!-- PLAYING -->
   <div id="pplay" class="pplay gone">
     <div class="tbar" id="tbar">
       <div style="display:flex;align-items:center;gap:8px">
         <span id="temoji" style="font-size:20px"></span>
         <span id="tname" style="font-weight:700;font-size:15px"></span>
-        <span style="color:var(--muted);font-size:13px">의 차례</span>
+        <span style="color:var(--muted);font-size:12px">의 차례</span>
       </div>
       <span class="mybadge gone" id="mbadge">내 차례!</span>
     </div>
     <div class="tabs">
-      <button class="tab on" data-t="board">🗺️ 보드</button>
-      <button class="tab" data-t="info">👤 내 정보</button>
-      <button class="tab" data-t="log">📜 기록</button>
+      <button class="tab on" data-t="b">🗺️ 보드</button>
+      <button class="tab" data-t="i">👤 내 정보</button>
+      <button class="tab" data-t="l">📜 기록</button>
     </div>
     <div id="tb" class="tc"></div>
     <div id="ti" class="tc gone"></div>
     <div id="tl" class="tc gone"></div>
-    <div class="abar">
-      <div id="dd" class="gone" style="text-align:center"></div>
+    <div class="abar" id="abar">
+      <div id="dice-area" class="dice-area gone"></div>
       <div id="ac"></div>
     </div>
   </div>
 </div>
 
+<!-- KEY CARD MODAL -->
 <div class="mov gone" id="mov">
   <div class="mo">
-    <div style="font-size:18px;font-weight:900;color:var(--gold);margin-bottom:8px" id="mtitle"></div>
-    <div style="color:var(--text);font-size:15px;line-height:1.6;margin-bottom:20px" id="mbody"></div>
+    <div class="mo-title" id="mtitle">🔑 천국열쇠</div>
+    <div id="mbody"></div>
     <div id="mact"></div>
   </div>
 </div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -141,46 +221,155 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 <script>
 var FC={apiKey:"AIzaSyA6Jwy0uPH6RpFPANKWoZPuEj2eBfndvsw",authDomain:"bible-marvel.firebaseapp.com",databaseURL:"https://bible-marvel-default-rtdb.firebaseio.com",projectId:"bible-marvel",storageBucket:"bible-marvel.firebasestorage.app",messagingSenderId:"878688160070",appId:"1:878688160070:web:9f2ea8f3a32adc7746bd47"};
 
-var SQ=[{id:0,type:"start",name:"시작/마침",icon:"✈️"},{id:1,type:"land",name:"소돔",price:15,toll:2,stars:1,desc:"고모라와 함께 멸망한 도시"},{id:2,type:"land",name:"우르",price:22,toll:5,stars:2,desc:"아브라함의 고향"},{id:3,type:"land",name:"욥바",price:33,toll:10,stars:1,desc:"요나가 배를 탄 항구"},{id:4,type:"land",name:"단",price:25,toll:7,stars:2,desc:"이스라엘 북쪽 경계"},{id:5,type:"land",name:"하란",price:37,toll:9,stars:2,desc:"아브라함이 머문 도시"},{id:6,type:"land",name:"가사",price:40,toll:11,stars:2,desc:"블레셋의 도시"},{id:7,type:"key",name:"천국열쇠",icon:"🔑"},{id:8,type:"land",name:"라기스",price:42,toll:13,stars:1,desc:"유다의 요새 도시"},{id:9,type:"land",name:"브엘세바",price:55,toll:27,stars:4,desc:"이삭이 우물을 판 곳"},{id:10,type:"land",name:"미디안",price:57,toll:19,stars:2,desc:"모세가 피신한 광야"},{id:11,type:"land",name:"세겜",price:43,toll:17,stars:2,desc:"야곱이 땅을 산 도시"},{id:12,type:"land",name:"아모리",price:59,toll:23,stars:2,desc:"가나안 족속"},{id:13,type:"land",name:"라오디게아",price:65,toll:25,stars:3,desc:"일곱 교회 중 하나"},{id:14,type:"wilderness",name:"광야",icon:"🏜️"},{id:15,type:"land",name:"두로",price:72,toll:27,stars:2,desc:"페니키아의 항구 도시"},{id:16,type:"land",name:"랍바",price:67,toll:29,stars:2,desc:"암몬의 수도"},{id:17,type:"land",name:"벧엘",price:75,toll:50,stars:5,desc:"야곱이 하나님을 만난 곳"},{id:18,type:"land",name:"루스드라",price:62,toll:26,stars:3,desc:"바울이 복음을 전한 도시"},{id:19,type:"key",name:"천국열쇠",icon:"🔑"},{id:20,type:"land",name:"데살로니가",price:80,toll:34,stars:3,desc:"바울의 선교지"},{id:21,type:"land",name:"다메섹",price:79,toll:30,stars:3,desc:"바울이 회심한 곳"},{id:22,type:"land",name:"기브아",price:70,toll:29,stars:3,desc:"사울 왕의 고향"},{id:23,type:"land",name:"이스르엘",price:80,toll:36,stars:3,desc:"아합의 궁전이 있던 곳"},{id:24,type:"land",name:"수산",price:90,toll:49,stars:4,desc:"에스더가 살던 궁전"},{id:25,type:"key",name:"천국열쇠",icon:"🔑"},{id:26,type:"land",name:"안디옥",price:86,toll:44,stars:3,desc:"처음 크리스천이라 불린 곳"},{id:27,type:"land",name:"앗수르",price:100,toll:46,stars:4,desc:"이스라엘을 멸망시킨 제국"},{id:28,type:"land",name:"다소",price:84,toll:37,stars:3,desc:"바울의 고향"},{id:29,type:"land",name:"아말렉",price:110,toll:42,stars:2,desc:"이스라엘의 숙적"},{id:30,type:"land",name:"악메다",price:115,toll:55,stars:2,desc:"메데 왕국의 도시"},{id:31,type:"land",name:"므깃도",price:120,toll:56,stars:3,desc:"아마겟돈의 장소"},{id:32,type:"land",name:"비손 강",price:122,toll:122,stars:3,desc:"에덴의 네 강 중 하나"},{id:33,type:"train",name:"구원열차",icon:"🚂"},{id:34,type:"land",name:"요단 강",price:50,toll:200,stars:6,desc:"예수님이 세례받으신 강"},{id:35,type:"land",name:"사마리아",price:135,toll:80,stars:4,desc:"사마리아 여인의 고향"},{id:36,type:"land",name:"고린도",price:130,toll:76,stars:3,desc:"바울이 편지를 쓴 교회"},{id:37,type:"land",name:"골로새",price:137,toll:82,stars:3,desc:"바울의 서신을 받은 교회"},{id:38,type:"land",name:"빌립보",price:143,toll:85,stars:4,desc:"유럽 첫 교회가 세워진 곳"},{id:39,type:"land",name:"헤브론",price:150,toll:95,stars:5,desc:"아브라함의 장지"},{id:40,type:"key",name:"천국열쇠",icon:"🔑"},{id:41,type:"land",name:"여리고",price:170,toll:75,stars:3,desc:"여호수아가 무너뜨린 성"},{id:42,type:"land",name:"가나",price:159,toll:80,stars:4,desc:"예수님의 첫 기적"},{id:43,type:"land",name:"갈라디아",price:180,toll:97,stars:4,desc:"바울이 편지를 쓴 지역"},{id:44,type:"land",name:"에베소",price:174,toll:87,stars:4,desc:"디아나 신전이 있던 도시"},{id:45,type:"land",name:"갈멜산",price:188,toll:94,stars:4,desc:"엘리야의 불 기적 장소"},{id:46,type:"land",name:"바벨론",price:200,toll:105,stars:5,desc:"다니엘이 포로로 잡힌 곳"},{id:47,type:"offering",name:"사랑의 헌금",icon:"💌"},{id:48,type:"land",name:"서머나",price:174,toll:100,stars:4,desc:"순교로 유명한 교회"},{id:49,type:"land",name:"에브라임",price:200,toll:150,stars:5,desc:"요셉의 아들 지파"},{id:50,type:"land",name:"벳세다",price:230,toll:170,stars:4,desc:"예수님의 제자들의 고향"},{id:51,type:"land",name:"애굽",price:250,toll:190,stars:6,desc:"이스라엘이 종살이한 땅"},{id:52,type:"land",name:"가버나움",price:300,toll:200,stars:5,desc:"예수님의 사역 본부"},{id:53,type:"land",name:"유다",price:300,toll:250,stars:6,desc:"남왕국의 중심지"},{id:54,type:"key",name:"천국열쇠",icon:"🔑"},{id:55,type:"land",name:"감람산",price:310,toll:230,stars:6,desc:"예수님이 기도하신 산"},{id:56,type:"land",name:"기혼 강",price:222,toll:220,stars:6,desc:"에덴의 네 강 중 하나"},{id:57,type:"land",name:"유브라데스 강",price:310,toll:250,stars:7,desc:"메소포타미아의 대강"},{id:58,type:"land",name:"시내산",price:350,toll:280,stars:7,desc:"모세가 십계명 받은 산"},{id:59,type:"key",name:"천국열쇠",icon:"🔑"},{id:60,type:"land",name:"나사렛",price:350,toll:280,stars:7,desc:"예수님이 자란 마을"},{id:61,type:"land",name:"베들레헴",price:400,toll:300,stars:7,desc:"예수님이 태어난 곳"},{id:62,type:"land",name:"시온산",price:450,toll:300,stars:8,desc:"하나님의 거룩한 산"},{id:63,type:"land",name:"예루살렘",price:460,toll:350,stars:8,desc:"다윗의 도성"},{id:64,type:"land",name:"천국",price:500,toll:450,stars:12,desc:"천국은 침노하는 자의 것"}];
+var SQ=[
+  {id:0,type:"start",name:"시작/마침",icon:"✈️"},
+  {id:1,type:"land",name:"소돔",price:15,toll:2,stars:1,desc:"고모라와 함께 멸망한 도시",row:1},
+  {id:2,type:"land",name:"우르",price:22,toll:5,stars:2,desc:"아브라함의 고향",row:1},
+  {id:3,type:"land",name:"욥바",price:33,toll:10,stars:1,desc:"요나가 배를 탄 항구",row:1},
+  {id:4,type:"land",name:"단",price:25,toll:7,stars:2,desc:"이스라엘 북쪽 경계",row:1},
+  {id:5,type:"land",name:"하란",price:37,toll:9,stars:2,desc:"아브라함이 머문 도시",row:1},
+  {id:6,type:"land",name:"가사",price:40,toll:11,stars:2,desc:"블레셋의 도시",row:1},
+  {id:7,type:"key",name:"천국열쇠",icon:"🔑",row:1},
+  {id:8,type:"land",name:"라기스",price:42,toll:13,stars:1,desc:"유다의 요새 도시",row:1},
+  {id:9,type:"land",name:"브엘세바",price:55,toll:27,stars:4,desc:"이삭이 우물을 판 곳",row:1},
+  {id:10,type:"land",name:"미디안",price:57,toll:19,stars:2,desc:"모세가 피신한 광야",row:1},
+  {id:11,type:"land",name:"세겜",price:43,toll:17,stars:2,desc:"야곱이 땅을 산 도시",row:1},
+  {id:12,type:"land",name:"아모리",price:59,toll:23,stars:2,desc:"가나안 족속",row:1},
+  {id:13,type:"land",name:"라오디게아",price:65,toll:25,stars:3,desc:"일곱 교회 중 하나",row:1},
+  {id:14,type:"wilderness",name:"광야",icon:"🏜️"},
+  {id:15,type:"land",name:"두로",price:72,toll:27,stars:2,desc:"페니키아 항구",row:2},
+  {id:16,type:"land",name:"랍바",price:67,toll:29,stars:2,desc:"암몬의 수도",row:2},
+  {id:17,type:"land",name:"벧엘",price:75,toll:50,stars:5,desc:"야곱이 하나님을 만난 곳",row:2},
+  {id:18,type:"land",name:"루스드라",price:62,toll:26,stars:3,desc:"바울이 복음을 전한 곳",row:2},
+  {id:19,type:"key",name:"천국열쇠",icon:"🔑",row:2},
+  {id:20,type:"land",name:"데살로니가",price:80,toll:34,stars:3,desc:"바울의 선교지",row:2},
+  {id:21,type:"land",name:"다메섹",price:79,toll:30,stars:3,desc:"바울이 회심한 곳",row:2},
+  {id:22,type:"land",name:"기브아",price:70,toll:29,stars:3,desc:"사울 왕의 고향",row:2},
+  {id:23,type:"land",name:"이스르엘",price:80,toll:36,stars:3,desc:"아합의 궁전",row:2},
+  {id:24,type:"land",name:"수산",price:90,toll:49,stars:4,desc:"에스더의 궁전",row:2},
+  {id:25,type:"key",name:"천국열쇠",icon:"🔑",row:2},
+  {id:26,type:"land",name:"안디옥",price:86,toll:44,stars:3,desc:"처음 크리스천",row:2},
+  {id:27,type:"land",name:"앗수르",price:100,toll:46,stars:4,desc:"이스라엘을 멸망시킨 제국",row:2},
+  {id:28,type:"land",name:"다소",price:84,toll:37,stars:3,desc:"바울의 고향",row:2},
+  {id:29,type:"land",name:"아말렉",price:110,toll:42,stars:2,desc:"이스라엘의 숙적",row:2},
+  {id:30,type:"land",name:"악메다",price:115,toll:55,stars:2,desc:"메데 왕국",row:2},
+  {id:31,type:"land",name:"므깃도",price:120,toll:56,stars:3,desc:"아마겟돈",row:2},
+  {id:32,type:"land",name:"비손 강",price:122,toll:122,stars:3,desc:"에덴의 강",row:2},
+  {id:33,type:"train",name:"구원열차",icon:"🚂"},
+  {id:34,type:"land",name:"요단 강",price:50,toll:200,stars:6,desc:"예수님 세례",row:3},
+  {id:35,type:"land",name:"사마리아",price:135,toll:80,stars:4,desc:"사마리아 여인",row:3},
+  {id:36,type:"land",name:"고린도",price:130,toll:76,stars:3,desc:"바울의 편지",row:3},
+  {id:37,type:"land",name:"골로새",price:137,toll:82,stars:3,desc:"바울의 서신",row:3},
+  {id:38,type:"land",name:"빌립보",price:143,toll:85,stars:4,desc:"유럽 첫 교회",row:3},
+  {id:39,type:"land",name:"헤브론",price:150,toll:95,stars:5,desc:"아브라함의 장지",row:3},
+  {id:40,type:"key",name:"천국열쇠",icon:"🔑",row:3},
+  {id:41,type:"land",name:"여리고",price:170,toll:75,stars:3,desc:"여호수아의 성",row:3},
+  {id:42,type:"land",name:"가나",price:159,toll:80,stars:4,desc:"예수님의 첫 기적",row:3},
+  {id:43,type:"land",name:"갈라디아",price:180,toll:97,stars:4,desc:"바울의 편지",row:3},
+  {id:44,type:"land",name:"에베소",price:174,toll:87,stars:4,desc:"디아나 신전",row:3},
+  {id:45,type:"land",name:"갈멜산",price:188,toll:94,stars:4,desc:"엘리야의 기적",row:3},
+  {id:46,type:"land",name:"바벨론",price:200,toll:105,stars:5,desc:"다니엘의 도시",row:3},
+  {id:47,type:"offering",name:"사랑의헌금",icon:"💌"},
+  {id:48,type:"land",name:"서머나",price:174,toll:100,stars:4,desc:"순교의 교회",row:4},
+  {id:49,type:"land",name:"에브라임",price:200,toll:150,stars:5,desc:"요셉의 아들",row:4},
+  {id:50,type:"land",name:"벳세다",price:230,toll:170,stars:4,desc:"제자들의 고향",row:4},
+  {id:51,type:"land",name:"애굽",price:250,toll:190,stars:6,desc:"종살이한 땅",row:4},
+  {id:52,type:"land",name:"가버나움",price:300,toll:200,stars:5,desc:"예수님 사역",row:4},
+  {id:53,type:"land",name:"유다",price:300,toll:250,stars:6,desc:"남왕국",row:4},
+  {id:54,type:"key",name:"천국열쇠",icon:"🔑",row:4},
+  {id:55,type:"land",name:"감람산",price:310,toll:230,stars:6,desc:"예수님 기도",row:4},
+  {id:56,type:"land",name:"기혼 강",price:222,toll:220,stars:6,desc:"에덴의 강",row:4},
+  {id:57,type:"land",name:"유브라데스",price:310,toll:250,stars:7,desc:"메소포타미아",row:4},
+  {id:58,type:"land",name:"시내산",price:350,toll:280,stars:7,desc:"십계명의 산",row:4},
+  {id:59,type:"key",name:"천국열쇠",icon:"🔑",row:4},
+  {id:60,type:"land",name:"나사렛",price:350,toll:280,stars:7,desc:"예수님 고향",row:4},
+  {id:61,type:"land",name:"베들레헴",price:400,toll:300,stars:7,desc:"예수님 탄생",row:4},
+  {id:62,type:"land",name:"시온산",price:450,toll:300,stars:8,desc:"하나님의 산",row:4},
+  {id:63,type:"land",name:"예루살렘",price:460,toll:350,stars:8,desc:"다윗의 도성",row:4},
+  {id:64,type:"land",name:"천국",price:500,toll:450,stars:12,desc:"침노하는 자의 것",row:4}
+];
 var TOTAL=65;
-var KC=[{id:1,text:"은행에서 100만원 받기",type:"money",amount:100,keep:false},{id:2,text:"은행에서 50만원 받기",type:"money",amount:50,keep:false},{id:3,text:"시작/도착으로 이동",type:"move_start",keep:false},{id:4,text:"다른 사람 땅 하나 가져오기! (즉시)",type:"steal",keep:false},{id:5,text:"주사위 한 번 더! (보관 가능)",type:"extra_dice",keep:true},{id:6,text:"내 땅 하나를 다른 사람에게 나눠주세요",type:"give_land",keep:false},{id:7,text:"은행에서 1000만원 받기!",type:"money",amount:1000,keep:false},{id:8,text:"사랑의 헌금으로 이동!",type:"move_offering",keep:false},{id:9,text:"2열에서 원하는 땅 하나 가지기",type:"take_row2",keep:false},{id:10,text:"은행에서 500만원 받기!",type:"money",amount:500,keep:false},{id:11,text:"사랑의 헌금 100만원",type:"pay_offering",amount:100,keep:false},{id:12,text:"광야로 이동!",type:"move_wilderness",keep:false},{id:13,text:"사랑의 헌금 50만원",type:"pay_offering",amount:50,keep:false},{id:14,text:"꽝! 큰소리로 낭독: 구하여도 받지 못함은 정욕으로 쓰려고 잘못 구하기 때문이라",type:"blank",keep:false},{id:15,text:"광야 즉시 탈출! (보관 가능)",type:"escape_wilderness",keep:true},{id:16,text:"구원열차로 이동!",type:"move_train",keep:false},{id:17,text:"꽝! 큰소리로 낭독: 남에게 대접받고 싶은 대로 너희도 남을 대접하라",type:"blank",keep:false},{id:18,text:"꽝! 큰소리로 낭독: 사랑하는 자들아 우리가 서로 사랑하자",type:"blank",keep:false},{id:19,text:"통행권 - 통행료 면제! (보관 가능)",type:"toll_free",keep:true}];
+
+var KC=[
+  {id:1,text:"은행에서 100만원 받기",type:"money",amount:100,keep:false},
+  {id:2,text:"은행에서 50만원 받기",type:"money",amount:50,keep:false},
+  {id:3,text:"시작/도착으로 이동",type:"move_start",keep:false},
+  {id:4,text:"다른 사람 땅 하나 가져오기! (즉시 사용)",type:"steal",keep:false},
+  {id:5,text:"주사위 한 번 더! (보관 가능)",type:"extra_dice",keep:true},
+  {id:6,text:"내 땅 하나를 다른 사람에게 나눠주세요",type:"give_land",keep:false},
+  {id:7,text:"은행에서 1000만원 받기!",type:"money",amount:1000,keep:false},
+  {id:8,text:"사랑의 헌금으로 이동!",type:"move_offering",keep:false},
+  {id:9,text:"2열에서 원하는 땅 하나 가지기",type:"take_row2",keep:false},
+  {id:10,text:"은행에서 500만원 받기!",type:"money",amount:500,keep:false},
+  {id:11,text:"사랑의 헌금 100만원",type:"pay_offering",amount:100,keep:false},
+  {id:12,text:"광야로 이동! (예수님의 삶 체험)",type:"move_wilderness",keep:false},
+  {id:13,text:"사랑의 헌금 50만원",type:"pay_offering",amount:50,keep:false},
+  {id:14,text:"꽝! 🙅 큰소리로 낭독하세요:\n\"구하여도 받지 못함은 정욕으로 쓰려고 잘못 구하기 때문이라\"",type:"blank",keep:false},
+  {id:15,text:"광야 즉시 탈출! (보관 가능)",type:"escape_wilderness",keep:true},
+  {id:16,text:"구원열차로 이동!",type:"move_train",keep:false},
+  {id:17,text:"꽝! 🙅 큰소리로 낭독하세요:\n\"남에게 대접받고 싶은 대로 너희도 남을 대접하라\"",type:"blank",keep:false},
+  {id:18,text:"꽝! 🙅 큰소리로 낭독하세요:\n\"사랑하는 자들아 우리가 서로 사랑하자\"",type:"blank",keep:false},
+  {id:19,text:"통행권 - 통행료 면제! (보관 가능)",type:"toll_free",keep:true}
+];
+
+var DICE_FACES=["","⚀","⚁","⚂","⚃","⚄","⚅"];
 var CL=["#E74C3C","#3498DB","#2ECC71","#F39C12","#9B59B6","#1ABC9C"];
 var EM=["🔴","🔵","🟢","🟡","🟣","🩵"];
+
 function cm(){return 3+4+15+50+40+100+200+500;}
 function shuf(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
-function de(n){return["","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣"][n];}
 function g(id){return document.getElementById(id);}
 
-var db,rRef,gRef,lRef,myId="",myName="",roomId="",gs=null,mode="create",pa=null;
+var db,rRef,gRef,lRef;
+var myId="",myName="",roomId="",gs=null,mode="create",pa=null;
+var selectedTime=0,timerInterval=null;
 
 document.addEventListener("DOMContentLoaded",function(){
-  try{firebase.initializeApp(FC);db=firebase.database();}catch(e){alert("Firebase 오류: "+e.message);return;}
+  try{firebase.initializeApp(FC);db=firebase.database();}
+  catch(e){alert("Firebase 오류: "+e.message);return;}
+
   g("bc").onclick=function(){showSetup("create");};
   g("bj").onclick=function(){showSetup("join");};
   g("bback").onclick=function(){showScr("lobby");};
   g("sbtn").onclick=handleSetup;
   g("bstart").onclick=startGame;
   g("rc").oninput=function(){this.value=this.value.toUpperCase();};
+
+  // 시간 선택 버튼
+  document.querySelectorAll(".time-opt").forEach(function(b){
+    b.onclick=function(){
+      document.querySelectorAll(".time-opt").forEach(function(x){x.classList.remove("gold");x.classList.add("bgray");});
+      b.classList.remove("bgray");b.classList.add("gold");
+      selectedTime=parseInt(b.dataset.min);
+    };
+  });
+
+  // 탭
   document.querySelectorAll(".tab").forEach(function(t){
     t.onclick=function(){
       var v=t.dataset.t;
       document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on");});
       t.classList.add("on");
-      ["board","info","log"].forEach(function(n){
-        g("t"+n[0]).classList.toggle("gone",n!==v);
-      });
+      g("tb").classList.toggle("gone",v!=="b");
+      g("ti").classList.toggle("gone",v!=="i");
+      g("tl").classList.toggle("gone",v!=="l");
     };
   });
-  g("mov").onclick=function(e){if(e.target===g("mov"))g("mov").classList.add("gone");};
+
+  g("mov").onclick=function(e){if(e.target===g("mov"))closeModal();};
 });
 
-function showScr(id){["lobby","setup","game"].forEach(function(s){g(s).classList.add("gone");});g(id).classList.remove("gone");}
+function showScr(id){
+  ["lobby","setup","game"].forEach(function(s){g(s).classList.add("gone");});
+  g(id).classList.remove("gone");
+}
 function showSetup(m){
   mode=m;
   g("sico").textContent=m==="create"?"🏠":"🚪";
   g("stitle").textContent=m==="create"?"방 만들기":"방 참가하기";
   g("sbtn").textContent=m==="create"?"방 생성":"참가하기";
   g("ri").classList.toggle("gone",m!=="join");
+  g("time-wrap").classList.toggle("gone",m!=="create");
   g("serr").style.display="none";g("ni").value="";g("rc").value="";
   showScr("setup");
 }
@@ -193,15 +382,30 @@ function handleSetup(){
   if(!nm){serr("닉네임을 입력해주세요");return;}
   g("sld").classList.remove("gone");g("sbtn").disabled=true;g("serr").style.display="none";
   if(mode==="create"){createRoom(nm);}
-  else{var cd=g("rc").value.trim().toUpperCase();if(!cd||cd.length!==5){serr("방 코드 5자리를 입력해주세요");return;}joinRoom(nm,cd);}
+  else{
+    var cd=g("rc").value.trim().toUpperCase();
+    if(!cd||cd.length!==5){serr("방 코드 5자리를 입력해주세요");return;}
+    joinRoom(nm,cd);
+  }
 }
 
 function createRoom(nm){
   myId="p_"+Math.random().toString(36).slice(2,9);myName=nm;
   roomId=Math.random().toString(36).slice(2,7).toUpperCase();
-  var st={phase:"waiting",players:[mkP(0)],currentTurn:0,landOwners:{},offeringPool:0,keyDeck:shuf(KC.map(function(c){return c.id;})),consecutiveDoubles:0,hostId:myId};
-  rRef=db.ref("rooms/"+roomId);gRef=db.ref("rooms/"+roomId+"/state");lRef=db.ref("rooms/"+roomId+"/log");
-  rRef.set({state:st,log:{0:"방 생성! 코드: "+roomId}}).then(function(){enterGame();}).catch(function(e){serr("오류: "+e.message);});
+  var st={
+    phase:"waiting",players:[mkP(0)],
+    currentTurn:0,landOwners:{},offeringPool:0,
+    keyDeck:shuf(KC.map(function(c){return c.id;})),
+    consecutiveDoubles:0,hostId:myId,
+    timeLimitMin:selectedTime,startTime:0,
+    needAction:false
+  };
+  rRef=db.ref("rooms/"+roomId);
+  gRef=db.ref("rooms/"+roomId+"/state");
+  lRef=db.ref("rooms/"+roomId+"/log");
+  rRef.set({state:st,log:{0:"방 생성! 코드: "+roomId+(selectedTime>0?" | ⏱️ "+selectedTime+"분 제한":"")}})
+    .then(function(){enterGame();})
+    .catch(function(e){serr("오류: "+e.message);});
 }
 
 function joinRoom(nm,cd){
@@ -213,15 +417,29 @@ function joinRoom(nm,cd){
     if(pl.length>=6){serr("방이 꽉 찼습니다");return;}
     myId="p_"+Math.random().toString(36).slice(2,9);myName=nm;roomId=cd;
     var np=mkP(pl.length);pl.push(np);
-    rRef=db.ref("rooms/"+roomId);gRef=db.ref("rooms/"+roomId+"/state");lRef=db.ref("rooms/"+roomId+"/log");
-    gRef.update({players:pl}).then(function(){lRef.push(myName+"님 입장! 👋");enterGame();}).catch(function(e){serr("오류: "+e.message);});
+    rRef=db.ref("rooms/"+roomId);
+    gRef=db.ref("rooms/"+roomId+"/state");
+    lRef=db.ref("rooms/"+roomId+"/log");
+    gRef.update({players:pl}).then(function(){
+      lRef.push(myName+"님 입장! 👋");
+      enterGame();
+    }).catch(function(e){serr("오류: "+e.message);});
   }).catch(function(e){serr("오류: "+e.message);});
 }
 
-function enterGame(){g("rbadge").textContent="코드: "+roomId;showScr("game");subGame();}
+function enterGame(){
+  g("rbadge").textContent="코드: "+roomId;
+  showScr("game");
+  subGame();
+}
 
 function subGame(){
-  gRef.on("value",function(snap){if(!snap.exists())return;gs=snap.val();renderGame();});
+  gRef.on("value",function(snap){
+    if(!snap.exists())return;
+    gs=snap.val();
+    renderGame();
+    updateTimer();
+  });
   lRef.on("value",function(snap){
     if(!snap.exists())return;
     var es=Object.values(snap.val()).reverse();
@@ -229,131 +447,414 @@ function subGame(){
   });
 }
 
+// TIMER
+function updateTimer(){
+  if(!gs)return;
+  var lim=gs.timeLimitMin||0;
+  if(!lim||!gs.startTime||gs.phase!=="playing"){g("timer-disp").classList.add("gone");return;}
+  g("timer-disp").classList.remove("gone");
+  var elapsed=Math.floor((Date.now()-gs.startTime)/1000);
+  var total=lim*60;
+  var left=Math.max(0,total-elapsed);
+  var mm=Math.floor(left/60),ss=left%60;
+  g("timer-disp").textContent=(mm<10?"0":"")+mm+":"+(ss<10?"0":"")+ss;
+  if(left<300){g("timer-disp").className="timer-box warn";}
+  else{g("timer-disp").className="timer-box";}
+  if(left===0&&gs.phase==="playing"){endGameByTimer();}
+}
+
+function endGameByTimer(){
+  var sorted=gs.players.slice().sort(function(a,b){return b.stars-a.stars;});
+  var winner=sorted[0];
+  showModal("⏱️ 시간 종료!",
+    "<div style='text-align:center;font-size:40px;margin-bottom:8px'>🏆</div>"
+    +"<div style='text-align:center;font-size:20px;font-weight:900;color:var(--gold)'>"+winner.emoji+" "+winner.name+"</div>"
+    +"<div style='text-align:center;color:var(--muted);margin-top:4px'>⭐ "+winner.stars+"개로 1위!</div>"
+    +"<div style='margin-top:14px'>"+sorted.map(function(p,i){
+      return"<div class='rrow'><span style='font-weight:900;color:"+(i===0?"var(--gold)":"var(--muted)")+";width:20px'>"+(i+1)+"</span>"
+        +"<span>"+p.emoji+"</span><span style='flex:1;color:"+p.color+";font-weight:700'>"+p.name+"</span>"
+        +"<span style='color:#ffd700'>⭐"+p.stars+"</span></div>";
+    }).join("")+"</div>",
+    "<button class='btn gold' onclick='closeModal()'>확인</button>"
+  );
+}
+
+// RENDER
 function renderGame(){
   if(!gs)return;
-  if(gs.phase==="waiting"){
-    g("pwait").classList.remove("gone");g("pplay").classList.add("gone");
-    var pl=gs.players||[];
-    g("wplayers").innerHTML=pl.map(function(p){var m=p.id===myId?"<span style='color:var(--blue);font-size:12px'>(나)</span>":"";return"<div class='wp'><span style='font-size:26px'>"+p.emoji+"</span><span style='color:"+p.color+";font-weight:700'>"+p.name+"</span>"+m+"</div>";}).join("");
-    var isH=pl[0]&&pl[0].id===myId;
-    g("bstart").classList.toggle("gone",!isH);g("whint").classList.toggle("gone",isH);
-  } else {
-    g("pwait").classList.add("gone");g("pplay").classList.remove("gone");
-    var cur=gs.players[gs.currentTurn],isMT=cur&&cur.id===myId,me=gs.players.find(function(p){return p.id===myId;});
-    g("tbar").className="tbar "+(isMT?"myturn":"other");
-    g("temoji").textContent=cur?cur.emoji:"";g("tname").textContent=cur?cur.name:"";
-    g("mbadge").classList.toggle("gone",!isMT);
-    renderBoard(me);renderInfo(me);renderActions(isMT,me,cur);
-  }
+  if(gs.phase==="waiting"){renderWaiting();}
+  else{renderPlaying();}
+}
+
+function renderWaiting(){
+  g("pwait").classList.remove("gone");g("pplay").classList.add("gone");
+  var pl=gs.players||[];
+  g("wplayers").innerHTML=pl.map(function(p){
+    var m=p.id===myId?"<span style='color:var(--blue);font-size:11px'>(나)</span>":"";
+    return"<div style='background:var(--sur);border-radius:11px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;border:1px solid var(--bor)'>"
+      +"<span style='font-size:26px'>"+p.emoji+"</span>"
+      +"<span style='color:"+p.color+";font-weight:700'>"+p.name+"</span>"+m+"</div>";
+  }).join("");
+  var lim=gs.timeLimitMin||0;
+  g("wtime-info").textContent=lim>0?"⏱️ 게임 제한 시간: "+lim+"분":"⏱️ 제한 시간 없음";
+  var isH=pl[0]&&pl[0].id===myId;
+  g("bstart").classList.toggle("gone",!isH);
+  g("whint").classList.toggle("gone",isH);
+}
+
+function renderPlaying(){
+  g("pwait").classList.add("gone");g("pplay").classList.remove("gone");
+  var cur=gs.players[gs.currentTurn];
+  var isMT=cur&&cur.id===myId;
+  var me=gs.players.find(function(p){return p.id===myId;});
+  g("tbar").className="tbar "+(isMT?"myturn":"other");
+  g("temoji").textContent=cur?cur.emoji:"";
+  g("tname").textContent=cur?cur.name:"";
+  g("mbadge").classList.toggle("gone",!isMT);
+  renderBoard(me);
+  renderInfo(me);
+  renderActions(isMT,me,cur);
 }
 
 function renderBoard(me){
   var own=gs.landOwners||{},bp={};
   gs.players.forEach(function(p){(bp[p.pos]=bp[p.pos]||[]).push(p);});
-  var s="<div style='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px'>"
-    +gs.players.map(function(p){return"<div class='sc' style='border:1px solid "+(p.id===myId?p.color:"transparent")+"'><div style='display:flex;align-items:center;gap:5px'><span>"+p.emoji+"</span><span style='color:"+p.color+";font-size:12px;font-weight:700'>"+p.name+"</span></div><div style='color:var(--gold);font-size:11px'>💰"+p.money.toLocaleString()+"만</div><div style='color:#ffd700;font-size:11px'>⭐"+p.stars+"</div>"+(p.inWilderness?"<div style='color:var(--red);font-size:10px'>🏜️광야</div>":"")+"</div>";}).join("")
-    +"</div>";
-  var q=SQ.map(function(sq){
-    var h=bp[sq.id]||[],op=own[sq.id]?gs.players.find(function(p){return p.id===own[sq.id];}):null;
-    var cls="sq"+(op&&op.id===myId?" mine":"")+(h.some(function(p){return p.id===myId;})?" here":"");
-    var ob=op?"<span style='background:"+op.color+"30;color:"+op.color+";padding:1px 6px;border-radius:6px;font-size:11px'>"+op.emoji+"</span>":"";
-    var pd=h.map(function(p){return"<span>"+p.emoji+"</span>";}).join("");
-    var pr=sq.type==="land"?"<span style='font-size:11px;color:var(--blue)'>"+sq.price+"만</span>":"";
-    return"<div class='"+cls+"'><span style='font-size:10px;color:var(--muted);width:18px'>"+sq.id+"</span><span style='font-size:14px'>"+(sq.type==="land"?"🏛️":(sq.icon||""))+"</span><span style='flex:1;font-size:13px;font-weight:700'>"+sq.name+"</span>"+pr+ob+"<div style='display:flex;gap:2px'>"+pd+"</div></div>";
+
+  // Player summary
+  var ps="<div class='player-summary'>"+gs.players.map(function(p){
+    var isMe=p.id===myId;
+    var isCur=gs.players[gs.currentTurn]&&gs.players[gs.currentTurn].id===p.id;
+    return"<div class='pscard"+(isMe?" active":"")+"' style='background:"+p.color+"18;border-color:"+(isCur?p.color:"transparent")+"'>"
+      +"<div style='display:flex;align-items:center;gap:4px;margin-bottom:3px'><span>"+p.emoji+"</span><span style='color:"+p.color+";font-size:11px;font-weight:700'>"+p.name+"</span></div>"
+      +"<div style='font-size:10px;color:var(--gold)'>💰"+p.money.toLocaleString()+"만</div>"
+      +"<div style='font-size:10px;color:#ffd700'>⭐"+p.stars+"</div>"
+      +(p.inWilderness?"<div style='font-size:9px;color:var(--red)'>🏜️광야</div>":"")+"</div>";
+  }).join("")+"</div>";
+
+  // 보드를 열별로 묶어서 표시
+  var rows={1:[],2:[],3:[],4:[]};
+  var specials=[];
+  SQ.forEach(function(s){
+    if(s.row){rows[s.row].push(s);}
+    else{specials.push(s);}
+  });
+
+  function renderSqCard(s){
+    var h=bp[s.id]||[];
+    var op=own[s.id]?gs.players.find(function(p){return p.id===own[s.id];}):null;
+    var isMine=op&&op.id===myId;
+    var isOther=op&&op.id!==myId;
+    var isHere=h.some(function(p){return p.id===myId;});
+    var cls="sq "+(s.type==="land"?"land"+(isMine?" mine":isOther?" others":""):"special")+(isHere?" here":"")+(s.type==="key"?" key-sq":"");
+    var pds=h.map(function(p){return"<span style='font-size:10px'>"+p.emoji+"</span>";}).join("");
+    var nm=s.name.length>5?s.name.slice(0,5)+"..":s.name;
+    if(s.type==="land"){
+      return"<div class='"+cls+"'>"
+        +(op?"<span class='sq-owner'>"+op.emoji+"</span>":"")
+        +"<div class='sq-name'>"+nm+"</div>"
+        +"<div class='sq-price'>"+s.price+"만</div>"
+        +"<div class='sq-stars'>"+"★".repeat(Math.min(s.stars,5))+"</div>"
+        +(pds?"<div class='sq-players'>"+pds+"</div>":"")
+        +"</div>";
+    } else {
+      return"<div class='"+cls+"'>"
+        +"<div class='sq-icon'>"+s.icon+"</div>"
+        +"<div class='sq-name' style='font-size:9px'>"+s.name+"</div>"
+        +(pds?"<div class='sq-players'>"+pds+"</div>":"")
+        +"</div>";
+    }
+  }
+
+  // 특수 칸 표시
+  var specHtml="<div class='board-section'><div class='section-label'>특수 칸</div><div class='sq-row'>"
+    +specials.map(renderSqCard).join("")+"</div></div>";
+
+  var rowHtml=[1,2,3,4].map(function(r){
+    return"<div class='board-section'><div class='section-label'>"+r+"열</div><div class='sq-row'>"
+      +rows[r].map(renderSqCard).join("")+"</div></div>";
   }).join("");
-  g("tb").innerHTML=s+q;
+
+  g("tb").innerHTML=ps+specHtml+rowHtml;
 }
 
 function renderInfo(me){
   if(!me){g("ti").innerHTML="";return;}
   var ml=(me.lands||[]).map(function(pos){return Object.assign({pos:pos},SQ[pos]);});
   var sr=gs.players.slice().sort(function(a,b){return b.stars-a.stars;});
-  var cd=(me.cards||[]).length>0?"<div style='color:var(--muted);font-size:13px;margin-bottom:8px'>🃏 보관 카드</div>"+(me.cards||[]).map(function(cid){var c=KC.find(function(x){return x.id===cid;});return"<div class='card' style='color:var(--blue);font-size:13px'>🔑 "+(c?c.text:"")+"</div>";}).join(""):"";
-  var ll=ml.length===0?"<div style='color:var(--muted);font-size:13px'>아직 땅이 없습니다.</div>":ml.map(function(l){return"<div class='card'><div style='display:flex;justify-content:space-between'><div><div style='font-weight:700'>"+l.name+"</div><div style='color:var(--muted);font-size:12px'>"+l.desc+"</div></div><div style='text-align:right'><div style='color:var(--blue);font-size:12px'>T:"+l.toll+"만</div><div style='font-size:11px'>"+"⭐".repeat(Math.min(l.stars,6))+"</div></div></div></div>";}).join("");
-  var rl=sr.map(function(p,i){return"<div class='rrow'><span style='font-weight:900;color:"+(i===0?"var(--gold)":"var(--muted)")+";width:22px'>"+(i+1)+"</span><span style='font-size:18px'>"+p.emoji+"</span><span style='flex:1;color:"+p.color+";font-weight:700'>"+p.name+"</span><span style='color:#ffd700'>⭐"+p.stars+"</span><span style='color:var(--gold);font-size:12px'>💰"+p.money.toLocaleString()+"만</span></div>";}).join("");
-  g("ti").innerHTML="<div style='background:linear-gradient(135deg,#1a2a1a,#1e3a1e);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid "+me.color+"40'><div style='display:flex;align-items:center;gap:12px;margin-bottom:12px'><span style='font-size:36px'>"+me.emoji+"</span><div><div style='color:"+me.color+";font-weight:900;font-size:18px'>"+me.name+"</div>"+(me.inWilderness?"<div style='color:var(--red);font-size:13px'>🏜️ 광야에 갇혀 있음</div>":"")+"</div></div><div class='sgrid'><div class='sc'><label>💰 보유 금액</label><b style='color:var(--gold)'>"+me.money.toLocaleString()+"만</b></div><div class='sc'><label>⭐ 별</label><b style='color:#ffd700'>"+me.stars+"개</b></div><div class='sc'><label>🏛️ 땅</label><b>"+(me.lands||[]).length+"개</b></div><div class='sc'><label>🃏 카드</label><b>"+(me.cards||[]).length+"개</b></div></div></div>"+cd+"<div style='color:var(--muted);font-size:13px;margin-bottom:8px;margin-top:8px'>🏛️ 보유 땅</div>"+ll+"<div style='color:var(--muted);font-size:13px;margin-top:16px;margin-bottom:8px'>🏆 순위</div>"+rl;
+
+  var cd=(me.cards||[]).length>0
+    ?"<div style='color:var(--muted);font-size:12px;margin-bottom:7px'>🃏 보관 카드</div>"
+      +(me.cards||[]).map(function(cid){
+        var c=KC.find(function(x){return x.id===cid;});
+        return"<div class='card' style='color:var(--blue);font-size:12px'>🔑 "+(c?c.text:"")+"</div>";
+      }).join("")
+    :"";
+
+  var ll=ml.length===0
+    ?"<div style='color:var(--muted);font-size:13px'>아직 땅이 없습니다.</div>"
+    :ml.map(function(l){
+      return"<div class='card'>"
+        +"<div style='display:flex;justify-content:space-between;align-items:center'>"
+        +"<div><div style='font-weight:700;font-size:13px'>"+l.name+"</div>"
+        +"<div style='color:var(--muted);font-size:11px'>"+l.desc+"</div></div>"
+        +"<div style='text-align:right'><div style='color:var(--blue);font-size:11px'>T:"+l.toll+"만</div>"
+        +"<div style='font-size:10px;color:#ffd700'>"+"★".repeat(Math.min(l.stars,5))+"</div></div>"
+        +"</div></div>";
+    }).join("");
+
+  var rl=sr.map(function(p,i){
+    return"<div class='rrow'>"
+      +"<span style='font-weight:900;color:"+(i===0?"var(--gold)":"var(--muted)")+";width:20px'>"+(i+1)+"</span>"
+      +"<span style='font-size:16px'>"+p.emoji+"</span>"
+      +"<span style='flex:1;color:"+p.color+";font-weight:700;font-size:13px'>"+p.name+"</span>"
+      +"<span style='color:#ffd700;font-size:12px'>⭐"+p.stars+"</span>"
+      +"<span style='color:var(--gold);font-size:11px'>"+p.money.toLocaleString()+"만</span>"
+      +"</div>";
+  }).join("");
+
+  g("ti").innerHTML=
+    "<div style='background:linear-gradient(135deg,#1a2a1a,#1e3a1e);border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid "+me.color+"40'>"
+    +"<div style='display:flex;align-items:center;gap:10px;margin-bottom:10px'>"
+    +"<span style='font-size:32px'>"+me.emoji+"</span>"
+    +"<div><div style='color:"+me.color+";font-weight:900;font-size:17px'>"+me.name+"</div>"
+    +(me.inWilderness?"<div style='color:var(--red);font-size:12px'>🏜️ 광야에 갇혀 있음</div>":"")+"</div></div>"
+    +"<div style='display:grid;grid-template-columns:1fr 1fr;gap:8px'>"
+    +"<div style='background:rgba(0,0,0,.3);border-radius:9px;padding:8px 10px'><div style='font-size:10px;color:var(--muted)'>💰 보유 금액</div><div style='font-size:15px;font-weight:900;color:var(--gold)'>"+me.money.toLocaleString()+"만</div></div>"
+    +"<div style='background:rgba(0,0,0,.3);border-radius:9px;padding:8px 10px'><div style='font-size:10px;color:var(--muted)'>⭐ 별 개수</div><div style='font-size:15px;font-weight:900;color:#ffd700'>"+me.stars+"개</div></div>"
+    +"<div style='background:rgba(0,0,0,.3);border-radius:9px;padding:8px 10px'><div style='font-size:10px;color:var(--muted)'>🏛️ 보유 땅</div><div style='font-size:15px;font-weight:900'>"+(me.lands||[]).length+"개</div></div>"
+    +"<div style='background:rgba(0,0,0,.3);border-radius:9px;padding:8px 10px'><div style='font-size:10px;color:var(--muted)'>🃏 카드</div><div style='font-size:15px;font-weight:900'>"+(me.cards||[]).length+"개</div></div>"
+    +"</div></div>"
+    +cd
+    +"<div style='color:var(--muted);font-size:12px;margin-bottom:7px;margin-top:8px'>🏛️ 보유 땅 ("+ml.length+"개)</div>"
+    +ll
+    +"<div style='color:var(--muted);font-size:12px;margin-top:14px;margin-bottom:7px'>🏆 현재 순위</div>"
+    +rl;
 }
 
 function renderActions(isMT,me,cur){
   var ac=g("ac");
-  if(!isMT){ac.innerHTML="<div style='text-align:center;color:var(--muted);font-size:14px;padding:8px 0'>"+(cur?cur.name:"")+"의 차례입니다...</div>";return;}
+  if(!isMT){
+    g("dice-area").classList.add("gone");
+    ac.innerHTML="<div style='text-align:center;color:var(--muted);font-size:13px;padding:6px 0'>"+(cur?cur.emoji+" "+cur.name:"")+"의 차례입니다...</div>";
+    return;
+  }
   var sq=me?SQ[me.pos]:null,own=gs.landOwners||{};
+
+  // 광야 탈출
   if(me&&me.inWilderness&&pa&&pa.type==="wilderness_choice"){
-    ac.innerHTML="<div style='color:var(--muted);font-size:13px;text-align:center;margin-bottom:10px'>광야 탈출 방법 선택</div><div class='brow'><button class='btn bsm' style='background:#1a3a6a;color:var(--blue)' id='wd'>🎲 더블 도전</button><button class='btn bsm' style='background:#1a3a2a;color:var(--green)' id='wo'>홀/짝 선택</button></div>";
-    g("wd").onclick=function(){wTry("double");};g("wo").onclick=function(){wTry("oddeven");};return;
+    g("dice-area").classList.add("gone");
+    ac.innerHTML="<div style='text-align:center;color:var(--muted);font-size:12px;margin-bottom:8px'>🏜️ 광야 탈출 방법 선택</div>"
+      +"<div class='brow'>"
+      +"<button class='btn bsm' style='background:#1a3a6a;color:var(--blue)' id='wd'>🎲 더블 도전</button>"
+      +"<button class='btn bsm' style='background:#1a3a2a;color:var(--green)' id='wo'>홀/짝 선택</button>"
+      +"</div>";
+    g("wd").onclick=function(){wTry("double");};
+    g("wo").onclick=function(){wTry("oddeven");};
+    return;
   }
   if(pa&&pa.type==="oddeven_choice"){
-    ac.innerHTML="<div style='color:var(--muted);font-size:13px;text-align:center;margin-bottom:10px'>홀수? 짝수?</div><div class='brow'><button class='btn bsm' style='background:#3a1a3a;color:#e879f9' id='po'>홀수</button><button class='btn bsm' style='background:#1a2a3a;color:var(--blue)' id='pe'>짝수</button></div>";
-    g("po").onclick=function(){oePick("odd");};g("pe").onclick=function(){oePick("even");};return;
+    g("dice-area").classList.add("gone");
+    ac.innerHTML="<div style='text-align:center;color:var(--muted);font-size:12px;margin-bottom:8px'>홀수? 짝수?</div>"
+      +"<div class='brow'>"
+      +"<button class='btn bsm' style='background:#3a1a3a;color:#e879f9' id='po'>홀수</button>"
+      +"<button class='btn bsm' style='background:#1a2a3a;color:var(--blue)' id='pe'>짝수</button>"
+      +"</div>";
+    g("po").onclick=function(){oePick("odd");};
+    g("pe").onclick=function(){oePick("even");};
+    return;
   }
   if(pa&&pa.type==="train_move"){
+    g("dice-area").classList.add("gone");
     var opts=SQ.filter(function(s){return s.type==="land";}).map(function(s){return"<option value='"+s.id+"'>"+s.name+"</option>";}).join("");
-    ac.innerHTML="<div style='color:var(--muted);font-size:13px;margin-bottom:8px'>🚂 이동할 곳 선택</div><select class='inp' id='td' style='margin-bottom:10px'>"+opts+"</select><button class='btn gold bsm' id='tgo'>이동!</button>";
-    g("tgo").onclick=confirmTrain;return;
+    ac.innerHTML="<div style='color:var(--muted);font-size:12px;margin-bottom:6px'>🚂 이동할 곳 선택</div>"
+      +"<select class='inp' id='td' style='margin-bottom:8px'>"+opts+"</select>"
+      +"<button class='btn gold bsm' id='tgo'>이동!</button>";
+    g("tgo").onclick=confirmTrain;
+    return;
   }
   if(pa&&pa.type==="steal_land"){
+    g("dice-area").classList.add("gone");
     var oth=gs.players.filter(function(p){return p.id!==myId&&(p.lands||[]).length>0;});
     if(!oth.length){ac.innerHTML="<div style='color:var(--muted);text-align:center'>빼앗을 땅이 없습니다</div>";endTurn();return;}
-    var h2="<div style='color:var(--muted);font-size:13px;margin-bottom:8px'>👊 빼앗을 땅 선택</div>";
-    oth.forEach(function(p){h2+="<div style='margin-bottom:8px'><div style='color:"+p.color+";font-size:12px;margin-bottom:4px'>"+p.emoji+" "+p.name+"</div><div style='display:flex;flex-wrap:wrap;gap:6px'>"+(p.lands||[]).map(function(pos){return"<button class='btn bsm bgray' style='flex:none;width:auto;padding:6px 10px;font-size:12px' data-f='"+p.id+"' data-p='"+pos+"'>"+SQ[pos].name+"</button>";}).join("")+"</div></div>";});
-    ac.innerHTML=h2;ac.querySelectorAll("[data-f]").forEach(function(b){b.onclick=function(){stealL(b.dataset.f,parseInt(b.dataset.p));};});return;
+    var h2="<div style='color:var(--muted);font-size:12px;margin-bottom:8px'>👊 빼앗을 땅 선택</div>";
+    oth.forEach(function(p){
+      h2+="<div style='margin-bottom:8px'>"
+        +"<div style='color:"+p.color+";font-size:12px;margin-bottom:4px'>"+p.emoji+" "+p.name+"</div>"
+        +"<div style='display:flex;flex-wrap:wrap;gap:5px'>"
+        +(p.lands||[]).map(function(pos){
+          return"<button class='btn bsm bgray' style='flex:none;width:auto;padding:6px 10px;font-size:11px' data-f='"+p.id+"' data-p='"+pos+"'>"+SQ[pos].name+"</button>";
+        }).join("")+"</div></div>";
+    });
+    ac.innerHTML=h2;
+    ac.querySelectorAll("[data-f]").forEach(function(b){b.onclick=function(){stealL(b.dataset.f,parseInt(b.dataset.p));};});
+    return;
   }
   if(pa&&pa.type==="take_row2"){
+    g("dice-area").classList.add("gone");
     var r2=SQ.filter(function(s){return s.id>=15&&s.id<=32&&s.type==="land"&&!own[s.id];});
     if(!r2.length){addLog("2열에 가져올 땅이 없습니다.");endTurn();return;}
-    var h3="<div style='color:var(--muted);font-size:13px;margin-bottom:8px'>🗺️ 2열 땅 선택</div><div style='display:flex;flex-wrap:wrap;gap:6px'>"+r2.map(function(s){return"<button class='btn bsm bblue' style='flex:none;width:auto;padding:6px 10px;font-size:12px' data-p='"+s.id+"'>"+s.name+"</button>";}).join("")+"</div>";
-    ac.innerHTML=h3;ac.querySelectorAll("[data-p]").forEach(function(b){b.onclick=function(){takeR2(parseInt(b.dataset.p));};});return;
+    ac.innerHTML="<div style='color:var(--muted);font-size:12px;margin-bottom:6px'>🗺️ 2열 땅 선택</div>"
+      +"<div style='display:flex;flex-wrap:wrap;gap:5px'>"
+      +r2.map(function(s){return"<button class='btn bsm bblue' style='flex:none;width:auto;padding:6px 10px;font-size:11px' data-p='"+s.id+"'>"+s.name+"</button>";}).join("")+"</div>";
+    ac.querySelectorAll("[data-p]").forEach(function(b){b.onclick=function(){takeR2(parseInt(b.dataset.p));};});
+    return;
   }
-  var isL=sq&&sq.type==="land",cb=isL&&!own[me.pos]&&me.money>=sq.price,un=isL&&!own[me.pos];
-  if(un){
-    var bb=cb?"<button class='btn bgreen bsm' id='bbuy'>🏡 구매 ("+sq.price+"만원)</button>":"";
-    ac.innerHTML="<div class='card hl' style='margin-bottom:10px'><div style='font-weight:700;margin-bottom:4px'>🏛️ "+sq.name+"</div><div style='color:var(--muted);font-size:12px;margin-bottom:8px'>"+sq.desc+"</div><div style='display:flex;justify-content:space-between;font-size:13px'><span>💰 <b style='color:var(--gold)'>"+sq.price+"만</b></span><span>⭐ <b style='color:#ffd700'>"+sq.stars+"개</b></span><span>🚶 <b style='color:var(--blue)'>"+sq.toll+"만</b></span></div></div><div class='brow'>"+bb+"<button class='btn bgray bsm' id='bskip'>⏭️ 패스</button></div>";
-    if(cb)g("bbuy").onclick=buyL;g("bskip").onclick=skipB;
-  } else {
-    var ex=(me.cards||[]).includes(5)?"<button class='btn bblue bsm' id='bex' style='margin-top:8px'>🎲 추가 주사위 (보관)</button>":"";
-    ac.innerHTML="<button class='btn gold' id='broll'>🎲 주사위 굴리기</button>"+ex;
-    g("broll").onclick=rollDice;
-    if((me.cards||[]).includes(5))g("bex").onclick=useEx;
+
+  // 땅 구매 상황
+  var isL=sq&&sq.type==="land";
+  var unowned=isL&&!own[me.pos];
+  var canBuy=unowned&&me.money>=sq.price;
+
+  if(unowned&&gs.needAction){
+    g("dice-area").classList.add("gone");
+    var bb=canBuy?"<button class='btn bgreen bsm' id='bbuy'>🏡 구매 ("+sq.price+"만원)</button>":"";
+    ac.innerHTML="<div class='card hl' style='margin-bottom:8px'>"
+      +"<div style='font-weight:700;margin-bottom:3px'>🏛️ "+sq.name+"</div>"
+      +"<div style='color:var(--muted);font-size:11px;margin-bottom:6px'>"+sq.desc+"</div>"
+      +"<div style='display:flex;justify-content:space-between;font-size:12px'>"
+      +"<span>💰<b style='color:var(--gold)'>"+sq.price+"만</b></span>"
+      +"<span>⭐<b style='color:#ffd700'>"+sq.stars+"개</b></span>"
+      +"<span>🚶<b style='color:var(--blue)'>"+sq.toll+"만</b></span>"
+      +"</div></div>"
+      +"<div class='brow'>"+bb+"<button class='btn bgray bsm' id='bskip'>⏭️ 패스</button></div>";
+    if(canBuy)g("bbuy").onclick=buyL;
+    g("bskip").onclick=skipB;
+    return;
   }
+
+  // 주사위 굴리기
+  g("dice-area").classList.remove("gone");
+  if(!g("dice-area").querySelector(".die")){
+    g("dice-area").innerHTML="<div class='dice-wrap'><div class='die' id='d1'>🎲</div><div class='die' id='d2'>🎲</div></div>";
+  }
+  var ex=(me.cards||[]).includes(5)?"<button class='btn bblue bsm' id='bex' style='margin-top:6px'>🎲 추가 주사위 사용 (보관 카드)</button>":"";
+  ac.innerHTML="<button class='btn gold' id='broll'>🎲 주사위 굴리기</button>"+ex;
+  g("broll").onclick=rollDice;
+  if((me.cards||[]).includes(5))g("bex").onclick=useEx;
 }
 
+// GAME ACTIONS
 function startGame(){
-  if(!gs||gs.players.length<2){alert("최소 2명 필요!");return;}
-  var st=JSON.parse(JSON.stringify(gs));st.phase="playing";st.currentTurn=0;
+  if(!gs||gs.players.length<2){alert("최소 2명이 필요합니다!");return;}
+  var st=JSON.parse(JSON.stringify(gs));
+  st.phase="playing";st.currentTurn=0;
+  st.startTime=gs.timeLimitMin>0?Date.now():0;
+  st.needAction=false;
   gRef.set(st).then(function(){addLog("🎮 게임 시작!");});
 }
 
-function rollDice(){var d1=Math.floor(Math.random()*6)+1,d2=Math.floor(Math.random()*6)+1;showD(d1,d2);procTurn(d1,d2);}
-function useEx(){var st=JSON.parse(JSON.stringify(gs));var me=st.players.find(function(p){return p.id===myId;});me.cards=me.cards.filter(function(c){return c!==5;});gRef.set(st).then(function(){addLog("🎲 추가 주사위!");rollDice();});}
-function showD(d1,d2){var dd=g("dd");dd.classList.remove("gone");var id=d1===d2;dd.innerHTML="<div class='dbox"+(id?" dbl":"")+"'>"+de(d1)+" "+de(d2)+(id?" 🎯 더블!":"")+"</div>";}
+function rollDice(){
+  if(!gs)return;
+  var d1=Math.floor(Math.random()*6)+1,d2=Math.floor(Math.random()*6)+1;
+  // 주사위 애니메이션
+  var da=g("dice-area");
+  da.classList.remove("gone");
+  da.innerHTML="<div class='dice-wrap'><div class='die rolling' id='d1'>🎲</div><div class='die rolling' id='d2'>🎲</div></div>";
+  setTimeout(function(){
+    var dbl=d1===d2;
+    da.innerHTML="<div class='dice-wrap'><div class='die"+(dbl?" double":"")+"'>"+DICE_FACES[d1]+"</div><div class='die"+(dbl?" double":"")+"'>"+DICE_FACES[d2]+"</div></div>"
+      +(dbl?"<div><span class='double-badge'>🎯 더블!</span></div>":"");
+    procTurn(d1,d2);
+  },400);
+}
+
+function useEx(){
+  var st=JSON.parse(JSON.stringify(gs));
+  var me=st.players.find(function(p){return p.id===myId;});
+  me.cards=me.cards.filter(function(c){return c!==5;});
+  st.needAction=false;
+  gRef.set(st).then(function(){addLog("🎲 "+myName+": 추가 주사위 카드 사용!");rollDice();});
+}
 
 function procTurn(d1,d2){
-  var st=JSON.parse(JSON.stringify(gs)),cur=st.players[st.currentTurn],isD=d1===d2,logs=["🎲 "+cur.name+": "+d1+"+"+d2+"="+(d1+d2)+(isD?" (더블!)":"")];
+  var st=JSON.parse(JSON.stringify(gs));
+  var cur=st.players[st.currentTurn];
+  var isD=d1===d2;
+  var logs=["🎲 "+cur.name+": "+d1+"+"+d2+"="+(d1+d2)+(isD?" (더블!)":"")];
+  st.needAction=false;
+
   if(cur.inWilderness){
     if(isD){cur.inWilderness=false;cur.wildernessCount=0;logs.push("🌟 "+cur.name+": 광야 탈출!");}
-    else{pa={type:"wilderness_choice"};gRef.set(st).then(function(){logs.forEach(function(l){addLog(l);});renderActions(true,cur,cur);});return;}
+    else{
+      pa={type:"wilderness_choice"};
+      st.needAction=false;
+      gRef.set(st).then(function(){logs.forEach(function(l){addLog(l);});renderActions(true,cur,cur);});
+      return;
+    }
   }
+
   var cs=st.consecutiveDoubles||0;cs=isD?cs+1:0;st.consecutiveDoubles=cs;
-  if(cs>=3){cur.inWilderness=true;cur.wildernessCount=0;cur.pos=14;st.consecutiveDoubles=0;logs.push("⚠️ "+cur.name+": 더블 3연속! 광야!");advTurn(st);gRef.set(st).then(function(){logs.forEach(function(l){addLog(l);});});return;}
+  if(cs>=3){
+    cur.inWilderness=true;cur.wildernessCount=0;cur.pos=14;st.consecutiveDoubles=0;
+    logs.push("⚠️ "+cur.name+": 더블 3연속! 광야!");
+    advTurn(st);gRef.set(st).then(function(){logs.forEach(function(l){addLog(l);});});
+    return;
+  }
+
   var steps=d1+d2,op=cur.pos,np=(op+steps)%TOTAL;
-  if(op+steps>=TOTAL){if(np===0){cur.money+=100;logs.push("🏠 시작/마침 +100만");}else{cur.money+=50;logs.push("💰 시작 통과 +50만");}}
-  cur.pos=np;var sq=SQ[np];logs.push("📍 "+cur.name+": "+sq.name);
-  var need=false;
+  if(op+steps>=TOTAL){
+    if(np===0){cur.money+=100;logs.push("🏠 "+cur.name+": 시작/마침 +100만원");}
+    else{cur.money+=50;logs.push("💰 "+cur.name+": 시작 통과 +50만원");}
+  }
+  cur.pos=np;
+  var sq=SQ[np];
+  logs.push("📍 "+cur.name+": "+sq.name+"에 도착");
+
+  var needPrompt=false;
+
   if(sq.type==="land"){
     var oid=st.landOwners&&st.landOwners[np];
-    if(!oid){need=true;}
-    else if(oid!==cur.id){var owP=st.players.find(function(p){return p.id===oid;});var hasTF=(cur.cards||[]).includes(19);if(hasTF){cur.cards=cur.cards.filter(function(c){return c!==19;});logs.push("🎫 통행권 사용!");}else if(owP){var pd=Math.min(cur.money,sq.toll);cur.money-=pd;owP.money+=pd;logs.push("💸 "+cur.name+"→"+owP.name+": "+sq.toll+"만");}}
-    else{logs.push("🏠 내 땅!");}
+    if(!oid){
+      needPrompt=true;st.needAction=true;
+    } else if(oid!==cur.id){
+      var owP=st.players.find(function(p){return p.id===oid;});
+      var hasTF=(cur.cards||[]).includes(19);
+      if(hasTF){cur.cards=cur.cards.filter(function(c){return c!==19;});logs.push("🎫 "+cur.name+": 통행권 사용!");}
+      else if(owP){var pd=Math.min(cur.money,sq.toll);cur.money-=pd;owP.money+=pd;logs.push("💸 "+cur.name+"→"+owP.name+": 통행료 "+sq.toll+"만원");}
+    } else{logs.push("🏠 "+cur.name+": 내 땅!");}
   } else if(sq.type==="key"){
-    var dk=st.keyDeck||[];if(!dk.length)dk=shuf(KC.map(function(c){return c.id;}));var cid=dk.shift();st.keyDeck=dk;
-    var card=KC.find(function(c){return c.id===cid;});logs.push("🔑 "+cur.name+": "+card.text);
-    var res=applyC(st,cur,card);if(res){pa=res;need=true;}
-  } else if(sq.type==="wilderness"){if(!cur.inWilderness){cur.inWilderness=true;cur.wildernessCount=0;logs.push("🏜️ 광야에 갇혔습니다!");}}
-  else if(sq.type==="train"){pa={type:"train_move"};need=true;logs.push("🚂 구원열차!");}
-  else if(sq.type==="offering"){var pl=st.offeringPool||0;if(cur.money>=100){cur.money-=100;st.offeringPool=pl+100;logs.push("💌 헌금 100만");}else if(cur.money>=50){cur.money-=50;st.offeringPool=pl+50;logs.push("💌 헌금 50만");}if(pl>0){cur.money+=pl;st.offeringPool=0;logs.push("💝 헌금 풀 "+pl+"만 획득!");}}
-  else if(sq.type==="start"){cur.money+=100;logs.push("🏠 +100만");}
-  if(!need&&!isD)advTurn(st);else if(!need&&isD)logs.push("🎯 더블! 한 번 더!");
+    var dk=st.keyDeck||[];if(!dk.length)dk=shuf(KC.map(function(c){return c.id;}));
+    var cid=dk.shift();st.keyDeck=dk;
+    var card=KC.find(function(c){return c.id===cid;});
+    logs.push("🔑 "+cur.name+": "+card.text.split("\n")[0]);
+    var res=applyC(st,cur,card);
+    if(res){pa=res;needPrompt=true;st.needAction=true;}
+    // 카드 팝업 표시
+    showKeyCardPopup(card);
+  } else if(sq.type==="wilderness"){
+    if(!cur.inWilderness){cur.inWilderness=true;cur.wildernessCount=0;logs.push("🏜️ "+cur.name+": 광야에 갇혔습니다!");}
+  } else if(sq.type==="train"){
+    pa={type:"train_move"};needPrompt=true;st.needAction=true;
+    logs.push("🚂 "+cur.name+": 구원열차! 이동할 곳을 선택하세요");
+  } else if(sq.type==="offering"){
+    var pl2=st.offeringPool||0;
+    if(cur.money>=100){cur.money-=100;st.offeringPool=pl2+100;logs.push("💌 "+cur.name+": 헌금 100만원");}
+    else if(cur.money>=50){cur.money-=50;st.offeringPool=pl2+50;logs.push("💌 "+cur.name+": 헌금 50만원");}
+    if(pl2>0){cur.money+=pl2;st.offeringPool=0;logs.push("💝 "+cur.name+": 헌금 풀 "+pl2+"만원 획득!");}
+  } else if(sq.type==="start"){
+    cur.money+=100;logs.push("🏠 "+cur.name+": 시작 정착 +100만원");
+  }
+
+  if(!needPrompt&&!isD)advTurn(st);
+  else if(!needPrompt&&isD)logs.push("🎯 더블! "+cur.name+" 한 번 더 굴리세요!");
+
   gRef.set(st).then(function(){logs.forEach(function(l){addLog(l);});});
+}
+
+function showKeyCardPopup(card){
+  var icon="🔑";
+  if(card.type==="money")icon="💰";
+  else if(card.type==="blank")icon="🙅";
+  else if(card.type==="move_wilderness")icon="🏜️";
+  else if(card.type==="steal")icon="👊";
+  else if(card.type==="move_train")icon="🚂";
+  else if(card.type==="toll_free")icon="🎫";
+  showModal("🔑 천국열쇠 카드",
+    "<div class='key-card'><div class='key-card-icon'>"+icon+"</div><div class='key-card-text'>"+card.text.replace(/\n/g,"<br>")+"</div>"
+    +(card.keep?"<div style='margin-top:8px;color:var(--blue);font-size:12px'>📦 보관 가능한 카드입니다</div>":"")
+    +"</div>",
+    "<button class='btn gold bsm' onclick='closeModal()'>확인</button>"
+  );
 }
 
 function applyC(st,cur,card){
@@ -366,23 +867,114 @@ function applyC(st,cur,card){
     case"pay_offering":cur.money-=Math.min(cur.money,card.amount);st.offeringPool=(st.offeringPool||0)+card.amount;break;
     case"steal":return{type:"steal_land"};
     case"take_row2":return{type:"take_row2"};
-    case"extra_dice":case"escape_wilderness":case"toll_free":if(card.keep){cur.cards=cur.cards||[];cur.cards.push(card.id);}break;
+    case"extra_dice":case"escape_wilderness":case"toll_free":
+      if(card.keep){cur.cards=cur.cards||[];cur.cards.push(card.id);}break;
     default:break;
   }
   return null;
 }
 
-function advTurn(st){st.currentTurn=(st.currentTurn+1)%st.players.length;}
+function advTurn(st){st.currentTurn=(st.currentTurn+1)%st.players.length;st.needAction=false;}
 function endTurn(){pa=null;var st=JSON.parse(JSON.stringify(gs));advTurn(st);gRef.set(st).then(function(){addLog("⏭️ 턴 종료");});}
-function buyL(){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];var sq=SQ[cur.pos];if(sq.type!=="land"||(st.landOwners&&st.landOwners[cur.pos])||cur.money<sq.price)return;cur.money-=sq.price;st.landOwners=st.landOwners||{};st.landOwners[cur.pos]=cur.id;cur.lands=cur.lands||[];cur.lands.push(cur.pos);cur.stars=(cur.stars||0)+sq.stars;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("🏡 "+cur.name+": "+sq.name+" 구매! ("+sq.price+"만, ⭐"+sq.stars+")");});}
-function skipB(){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];advTurn(st);pa=null;gRef.set(st).then(function(){addLog("⏭️ "+cur.name+": 패스");});}
-function wTry(m){if(m==="double"){var d1=Math.floor(Math.random()*6)+1,d2=Math.floor(Math.random()*6)+1;showD(d1,d2);addLog("🎲 더블 도전 "+d1+"+"+d2+(d1===d2?" → 탈출!":" → 실패"));procW(d1===d2);}else{pa={type:"oddeven_choice"};renderActions(true,gs.players.find(function(p){return p.id===myId;}),null);}}
-function oePick(c){var d=Math.floor(Math.random()*6)+1;var io=d%2===1;var w=(c==="odd"&&io)||(c==="even"&&!io);showD(d,d);addLog("🎲 "+d+(io?" 홀":" 짝")+" - "+(c==="odd"?"홀":"짝")+" 선택 → "+(w?"탈출!":"실패"));procW(w);}
-function procW(esc){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];if(esc){cur.inWilderness=false;cur.wildernessCount=0;pa=null;gRef.set(st).then(function(){rollDice();});}else{cur.wildernessCount=(cur.wildernessCount||0)+1;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("😔 광야 탈출 실패");});}}
-function confirmTrain(){var dest=parseInt(g("td").value);var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];cur.pos=dest;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("🚂 "+cur.name+": "+SQ[dest].name+"으로 이동!");});}
-function stealL(fid,pos){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];var fr=st.players.find(function(p){return p.id===fid;});if(!fr)return;fr.lands=(fr.lands||[]).filter(function(p){return p!==pos;});fr.stars=Math.max(0,(fr.stars||0)-(SQ[pos].stars||0));cur.lands=cur.lands||[];cur.lands.push(pos);cur.stars=(cur.stars||0)+(SQ[pos].stars||0);st.landOwners=st.landOwners||{};st.landOwners[pos]=cur.id;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("👊 "+cur.name+": "+fr.name+"의 "+SQ[pos].name+" 획득!");});}
-function takeR2(pos){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];var sq=SQ[pos];cur.lands=cur.lands||[];cur.lands.push(pos);cur.stars=(cur.stars||0)+sq.stars;st.landOwners=st.landOwners||{};st.landOwners[pos]=cur.id;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("🗺️ "+cur.name+": 2열 "+sq.name+" 획득!");});}
+
+function buyL(){
+  var st=JSON.parse(JSON.stringify(gs));
+  var cur=st.players[st.currentTurn];
+  var sq=SQ[cur.pos];
+  if(sq.type!=="land"||(st.landOwners&&st.landOwners[cur.pos])||cur.money<sq.price)return;
+  cur.money-=sq.price;
+  st.landOwners=st.landOwners||{};st.landOwners[cur.pos]=cur.id;
+  cur.lands=cur.lands||[];cur.lands.push(cur.pos);
+  cur.stars=(cur.stars||0)+sq.stars;
+  advTurn(st);pa=null;
+  gRef.set(st).then(function(){addLog("🏡 "+cur.name+": "+sq.name+" 구매! ("+sq.price+"만, ⭐"+sq.stars+")");});
+}
+
+function skipB(){
+  var st=JSON.parse(JSON.stringify(gs));
+  var cur=st.players[st.currentTurn];
+  advTurn(st);pa=null;
+  gRef.set(st).then(function(){addLog("⏭️ "+cur.name+": 구매 패스");});
+}
+
+function wTry(m){
+  if(m==="double"){
+    var d1=Math.floor(Math.random()*6)+1,d2=Math.floor(Math.random()*6)+1;
+    var da=g("dice-area");da.classList.remove("gone");
+    da.innerHTML="<div class='dice-wrap'><div class='die rolling'>🎲</div><div class='die rolling'>🎲</div></div>";
+    setTimeout(function(){
+      var dbl=d1===d2;
+      da.innerHTML="<div class='dice-wrap'><div class='die"+(dbl?" double":"")+"'>"+DICE_FACES[d1]+"</div><div class='die"+(dbl?" double":"")+"'>"+DICE_FACES[d2]+"</div></div>"+(dbl?"<div><span class='double-badge'>🎯 더블!</span></div>":"");
+      addLog("🎲 "+myName+": 더블 도전 "+d1+"+"+d2+(dbl?" → 탈출!":" → 실패"));
+      procW(dbl);
+    },400);
+  } else {
+    pa={type:"oddeven_choice"};
+    renderActions(true,gs.players.find(function(p){return p.id===myId;}),null);
+  }
+}
+
+function oePick(c){
+  var d=Math.floor(Math.random()*6)+1;
+  var io=d%2===1;var w=(c==="odd"&&io)||(c==="even"&&!io);
+  var da=g("dice-area");da.classList.remove("gone");
+  da.innerHTML="<div class='dice-wrap'><div class='die"+(w?" double":"")+"'>"+DICE_FACES[d]+"</div></div>";
+  addLog("🎲 "+myName+": "+d+(io?" (홀)":" (짝)")+" → "+(c==="odd"?"홀":"짝")+" 선택 → "+(w?"탈출!":"실패"));
+  procW(w);
+}
+
+function procW(esc){
+  var st=JSON.parse(JSON.stringify(gs));
+  var cur=st.players[st.currentTurn];
+  if(esc){cur.inWilderness=false;cur.wildernessCount=0;pa=null;st.needAction=false;gRef.set(st).then(function(){rollDice();});}
+  else{cur.wildernessCount=(cur.wildernessCount||0)+1;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("😔 "+cur.name+": 광야 탈출 실패");});}
+}
+
+function confirmTrain(){
+  var dest=parseInt(g("td").value);
+  var st=JSON.parse(JSON.stringify(gs));
+  var cur=st.players[st.currentTurn];
+  cur.pos=dest;advTurn(st);pa=null;
+  gRef.set(st).then(function(){addLog("🚂 "+cur.name+": "+SQ[dest].name+"으로 이동!");});
+}
+
+function stealL(fid,pos){
+  var st=JSON.parse(JSON.stringify(gs));
+  var cur=st.players[st.currentTurn];
+  var fr=st.players.find(function(p){return p.id===fid;});
+  if(!fr)return;
+  fr.lands=(fr.lands||[]).filter(function(p){return p!==pos;});
+  fr.stars=Math.max(0,(fr.stars||0)-(SQ[pos].stars||0));
+  cur.lands=cur.lands||[];cur.lands.push(pos);
+  cur.stars=(cur.stars||0)+(SQ[pos].stars||0);
+  st.landOwners=st.landOwners||{};st.landOwners[pos]=cur.id;
+  advTurn(st);pa=null;
+  gRef.set(st).then(function(){addLog("👊 "+cur.name+": "+fr.name+"의 "+SQ[pos].name+" 획득!");});
+}
+
+function takeR2(pos){
+  var st=JSON.parse(JSON.stringify(gs));
+  var cur=st.players[st.currentTurn];
+  var sq=SQ[pos];
+  cur.lands=cur.lands||[];cur.lands.push(pos);
+  cur.stars=(cur.stars||0)+sq.stars;
+  st.landOwners=st.landOwners||{};st.landOwners[pos]=cur.id;
+  advTurn(st);pa=null;
+  gRef.set(st).then(function(){addLog("🗺️ "+cur.name+": 2열 "+sq.name+" 획득!");});
+}
+
 function addLog(msg){if(lRef)lRef.push(msg);}
+
+function showModal(title,body,actions){
+  g("mtitle").textContent=title;
+  g("mbody").innerHTML=body;
+  g("mact").innerHTML=actions||"<button class='btn gold bsm' onclick='closeModal()'>확인</button>";
+  g("mov").classList.remove("gone");
+}
+function closeModal(){g("mov").classList.add("gone");}
+
+// 1초마다 타이머 업데이트
+setInterval(function(){if(gs&&gs.phase==="playing")updateTimer();},1000);
 </script>
 </body>
 </html>
