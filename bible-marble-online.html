@@ -3,1094 +3,386 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>📖 성경마블 Online</title>
+<title>성경마블 Online</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --gold: #f0c040;
-    --blue: #4fc3f7;
-    --green: #2ecc71;
-    --red: #e74c3c;
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1c2128;
-    --border: #30363d;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --font: 'Noto Sans KR', sans-serif;
-  }
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); overflow: hidden; }
-  #app { height: 100vh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; position: relative; }
-
-  /* ── SCREENS ── */
-  .screen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  .screen.hidden { display: none; }
-
-  /* ── LOBBY ── */
-  #lobby { background: radial-gradient(ellipse at 50% 30%, #1a2a4a 0%, #0d1117 70%); justify-content: center; align-items: center; gap: 0; padding: 32px 24px; }
-  .lobby-logo { font-size: 72px; margin-bottom: 8px; filter: drop-shadow(0 0 20px #f0c04080); animation: float 3s ease-in-out infinite; }
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-  .lobby-title { font-size: 38px; font-weight: 900; color: var(--gold); letter-spacing: -1px; text-shadow: 0 0 30px #f0c04060; }
-  .lobby-sub { color: var(--muted); font-size: 13px; margin-top: 4px; margin-bottom: 40px; }
-  .lobby-btns { width: 100%; display: flex; flex-direction: column; gap: 14px; }
-
-  /* ── SETUP ── */
-  #setup { padding: 24px; justify-content: center; gap: 16px; }
-  .setup-back { position: absolute; top: 16px; left: 16px; background: none; border: none; color: var(--muted); font-size: 28px; cursor: pointer; z-index: 10; padding: 4px; }
-  .setup-icon { font-size: 56px; text-align: center; }
-  .setup-title { font-size: 26px; font-weight: 900; color: var(--gold); text-align: center; }
-
-  /* ── GAME ── */
-  #game { overflow: hidden; }
-  .game-header { background: var(--surface); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .game-title { font-weight: 900; color: var(--gold); font-size: 17px; }
-  .room-badge { background: #0f3460; color: var(--blue); font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 700; letter-spacing: 1px; }
-  .turn-bar { padding: 9px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; transition: background 0.4s; }
-  .turn-bar.my-turn { background: linear-gradient(90deg, #1a3a1a, #162e16); }
-  .turn-bar.other-turn { background: var(--surface2); }
-  .my-turn-badge { background: var(--green); color: white; font-size: 11px; font-weight: 900; padding: 4px 12px; border-radius: 20px; }
-  .tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .tab { flex: 1; padding: 10px 0; background: none; border: none; color: var(--muted); font-family: var(--font); font-size: 13px; font-weight: 700; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
-  .tab.active { color: var(--gold); border-bottom-color: var(--gold); background: var(--surface); }
-  .tab-content { flex: 1; overflow-y: auto; padding: 14px; }
-  .tab-content.hidden { display: none; }
-  .action-bar { padding: 14px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--bg); }
-
-  /* ── BUTTONS ── */
-  .btn { border: none; border-radius: 14px; padding: 15px 20px; font-size: 17px; font-weight: 700; cursor: pointer; font-family: var(--font); width: 100%; transition: transform 0.1s, opacity 0.1s; -webkit-tap-highlight-color: transparent; }
-  .btn:active { transform: scale(0.97); opacity: 0.85; }
-  .btn-gold { background: var(--gold); color: #1a1a2e; box-shadow: 0 4px 20px #f0c04040; }
-  .btn-blue { background: var(--blue); color: #0d1117; box-shadow: 0 4px 20px #4fc3f740; }
-  .btn-green { background: var(--green); color: white; box-shadow: 0 4px 20px #2ecc7140; }
-  .btn-gray { background: #2d333b; color: var(--text); }
-  .btn-red { background: var(--red); color: white; }
-  .btn-sm { padding: 11px 16px; font-size: 15px; border-radius: 11px; }
-  .btn-row { display: flex; gap: 10px; }
-  .btn-row .btn { flex: 1; }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  /* ── INPUTS ── */
-  .inp { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; color: var(--text); font-size: 16px; font-family: var(--font); outline: none; width: 100%; transition: border-color 0.2s; }
-  .inp:focus { border-color: var(--gold); }
-  .inp::placeholder { color: var(--muted); }
-
-  /* ── CARDS ── */
-  .card { background: var(--surface); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--border); }
-  .card.highlight { border-color: var(--gold); }
-  .card.my-pos { border-color: var(--gold); background: #1a2010; }
-
-  /* ── PLAYER CHIPS ── */
-  .player-row { display: flex; align-items: center; gap: 10px; }
-  .player-chip { display: inline-flex; align-items: center; gap: 5px; }
-
-  /* ── BOARD SQUARES ── */
-  .sq { display: flex; align-items: center; gap: 8px; background: var(--surface); border-radius: 9px; padding: 7px 10px; margin-bottom: 5px; border: 1px solid transparent; transition: border-color 0.2s; }
-  .sq.mine { border-color: var(--gold); background: #1e2a10; }
-  .sq.here { border-color: #fff; background: #1a2030; }
-  .sq-idx { font-size: 10px; color: var(--muted); width: 18px; flex-shrink: 0; }
-  .sq-icon { font-size: 15px; flex-shrink: 0; }
-  .sq-name { flex: 1; font-size: 13px; font-weight: 700; }
-  .sq-price { font-size: 11px; color: var(--blue); flex-shrink: 0; }
-  .sq-owner { font-size: 13px; flex-shrink: 0; }
-  .sq-players { display: flex; gap: 2px; flex-shrink: 0; }
-
-  /* ── SCOREBOARD ── */
-  .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .score-card { background: var(--surface); border-radius: 11px; padding: 10px 12px; }
-  .score-label { font-size: 11px; color: var(--muted); }
-  .score-val { font-size: 17px; font-weight: 900; margin-top: 2px; }
-
-  /* ── LOG ── */
-  .log-entry { background: var(--surface); border-radius: 8px; padding: 8px 11px; margin-bottom: 5px; font-size: 13px; color: #c9d1d9; line-height: 1.5; }
-
-  /* ── DICE ── */
-  .dice-display { text-align: center; margin-bottom: 10px; }
-  .dice-box { display: inline-block; font-size: 30px; background: var(--surface); padding: 8px 24px; border-radius: 20px; }
-  .dice-box.double { color: var(--gold); border: 1px solid var(--gold); }
-
-  /* ── WAITING ── */
-  .waiting-list { padding: 16px; }
-  .waiting-player { background: var(--surface); border-radius: 11px; padding: 11px 14px; margin-bottom: 9px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); }
-
-  /* ── MODAL ── */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: flex-end; justify-content: center; z-index: 100; max-width: 480px; margin: 0 auto; }
-  .modal-overlay.hidden { display: none; }
-  .modal { background: var(--surface); border-radius: 22px 22px 0 0; padding: 24px 20px 32px; width: 100%; border-top: 1px solid var(--border); }
-  .modal-title { font-size: 18px; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
-  .modal-body { color: var(--text); font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
-
-  /* ── RANKINGS ── */
-  .rank-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border-radius: 10px; padding: 9px 12px; margin-bottom: 6px; }
-  .rank-num { font-weight: 900; color: var(--muted); width: 22px; }
-  .rank-num.first { color: var(--gold); }
-
-  /* ── CONFETTI ── */
-  .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
-  .confetti-wrap.hidden { display: none; }
-
-  /* ── SPINNER ── */
-  .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── WILDERNESS ODD/EVEN ── */
-  .oddeven-btn { flex: 1; padding: 14px; font-size: 17px; font-weight: 900; border: none; border-radius: 12px; cursor: pointer; font-family: var(--font); transition: transform 0.1s; }
-  .oddeven-btn:active { transform: scale(0.96); }
-
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-  /* Firebase config notice */
-  .config-notice { background: #1a2a1a; border: 1px solid #2ecc7160; border-radius: 14px; padding: 16px; margin-bottom: 16px; font-size: 13px; color: #8ab4d4; line-height: 1.7; }
-  .config-notice code { background: #0d1117; padding: 2px 6px; border-radius: 5px; color: var(--gold); font-size: 12px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#f0c040;--blue:#4fc3f7;--green:#2ecc71;--red:#e74c3c;--bg:#0d1117;--sur:#161b22;--sur2:#1c2128;--bor:#30363d;--text:#e6edf3;--muted:#8b949e;--font:'Noto Sans KR',sans-serif}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden}
+#app{height:100vh;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+.screen{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.gone{display:none!important}
+#lobby{background:radial-gradient(ellipse at 50% 30%,#1a2a4a,#0d1117);justify-content:center;align-items:center;padding:32px 24px}
+.logo{font-size:72px;margin-bottom:8px;animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.title{font-size:38px;font-weight:900;color:var(--gold);letter-spacing:-1px;text-shadow:0 0 30px #f0c04060}
+.sub{color:var(--muted);font-size:13px;margin-top:4px;margin-bottom:40px}
+.lbtns{width:100%;display:flex;flex-direction:column;gap:14px}
+#setup{padding:24px;justify-content:center;gap:14px}
+.backbtn{position:absolute;top:16px;left:16px;background:none;border:none;color:var(--muted);font-size:28px;cursor:pointer;z-index:10}
+.btn{border:none;border-radius:14px;padding:15px 20px;font-size:17px;font-weight:700;cursor:pointer;font-family:var(--font);width:100%;transition:transform .1s,opacity .1s;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97);opacity:.85}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.gold{background:var(--gold);color:#1a1a2e;box-shadow:0 4px 20px #f0c04040}
+.bblue{background:var(--blue);color:#0d1117}
+.bgreen{background:var(--green);color:#fff}
+.bgray{background:#2d333b;color:var(--text)}
+.bsm{padding:11px 16px;font-size:15px;border-radius:11px}
+.brow{display:flex;gap:10px}
+.brow .btn{flex:1}
+.inp{background:var(--sur2);border:1px solid var(--bor);border-radius:12px;padding:14px 16px;color:var(--text);font-size:16px;font-family:var(--font);outline:none;width:100%}
+.inp:focus{border-color:var(--gold)}
+.inp::placeholder{color:var(--muted)}
+#game{overflow:hidden}
+.ghdr{background:var(--sur);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bor);flex-shrink:0}
+.gtitle{font-weight:900;color:var(--gold);font-size:17px}
+.rbadge{background:#0f3460;color:var(--blue);font-size:12px;padding:4px 12px;border-radius:20px;font-weight:700}
+.tbar{padding:9px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bor);flex-shrink:0}
+.tbar.myturn{background:linear-gradient(90deg,#1a3a1a,#162e16)}
+.tbar.other{background:var(--sur2)}
+.mybadge{background:var(--green);color:#fff;font-size:11px;font-weight:900;padding:4px 12px;border-radius:20px}
+.tabs{display:flex;border-bottom:1px solid var(--bor);flex-shrink:0}
+.tab{flex:1;padding:10px 0;background:none;border:none;color:var(--muted);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold);background:var(--sur)}
+.tc{flex:1;overflow-y:auto;padding:14px}
+.abar{padding:14px;border-top:1px solid var(--bor);flex-shrink:0;background:var(--bg)}
+.pplay{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.card{background:var(--sur);border-radius:12px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--bor)}
+.card.hl{border-color:var(--gold)}
+.sq{display:flex;align-items:center;gap:8px;background:var(--sur);border-radius:9px;padding:7px 10px;margin-bottom:5px;border:1px solid transparent}
+.sq.mine{border-color:var(--gold);background:#1e2a10}
+.sq.here{border-color:#fff;background:#1a2030}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sc{background:var(--sur);border-radius:11px;padding:10px 12px}
+.sc label{font-size:11px;color:var(--muted);display:block}
+.sc b{font-size:17px;font-weight:900}
+.loge{background:var(--sur);border-radius:8px;padding:8px 11px;margin-bottom:5px;font-size:13px;color:#c9d1d9;line-height:1.5}
+.dbox{display:inline-block;font-size:30px;background:var(--sur);padding:8px 24px;border-radius:20px;margin-bottom:10px}
+.dbox.dbl{color:var(--gold);border:1px solid var(--gold)}
+.wp{background:var(--sur);border-radius:11px;padding:11px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px;border:1px solid var(--bor)}
+.rrow{display:flex;align-items:center;gap:10px;background:var(--sur);border-radius:10px;padding:9px 12px;margin-bottom:6px}
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:100;max-width:480px;margin:0 auto}
+.mo{background:var(--sur);border-radius:22px 22px 0 0;padding:24px 20px 32px;width:100%;border-top:1px solid var(--bor)}
+.spin{display:inline-block;width:20px;height:20px;border:3px solid var(--bor);border-top-color:var(--gold);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--bor);border-radius:4px}
 </style>
 </head>
 <body>
 <div id="app">
-
-  <!-- ══════════════════ LOBBY ══════════════════ -->
-  <div id="lobby" class="screen">
-    <div class="lobby-logo">📖</div>
-    <div class="lobby-title">성경마블</div>
-    <div class="lobby-sub">Bible Marble Online · 최대 6인</div>
-    <div class="lobby-btns">
-      <button class="btn btn-gold" onclick="showSetup('create')">🏠 방 만들기</button>
-      <button class="btn btn-blue" onclick="showSetup('join')">🚪 방 참가하기</button>
-    </div>
-    <div id="firebase-warning" class="config-notice" style="margin-top:28px;display:none">
-      ⚠️ Firebase 설정이 필요합니다!<br>
-      이 파일 상단의 <code>FIREBASE_CONFIG</code> 변수에<br>
-      Firebase 설정값을 입력해주세요.<br>
-      아래 📋 설정 가이드를 참고하세요.
-    </div>
+<div id="lobby" class="screen">
+  <div class="logo">📖</div>
+  <div class="title">성경마블</div>
+  <div class="sub">Bible Marble Online · 최대 6인</div>
+  <div class="lbtns">
+    <button class="btn gold" id="bc">🏠 방 만들기</button>
+    <button class="btn bblue" id="bj">🚪 방 참가하기</button>
   </div>
-
-  <!-- ══════════════════ SETUP ══════════════════ -->
-  <div id="setup" class="screen hidden">
-    <button class="setup-back" onclick="showScreen('lobby')">←</button>
-    <div class="setup-icon" id="setup-icon">🏠</div>
-    <div class="setup-title" id="setup-title">방 만들기</div>
-    <input class="inp" id="name-input" placeholder="닉네임 입력" maxlength="10">
-    <div id="room-input-wrap" style="display:none">
-      <input class="inp" id="room-input" placeholder="방 코드 입력 (대문자 5자리)" maxlength="5" oninput="this.value=this.value.toUpperCase()">
-    </div>
-    <button class="btn btn-gold" id="setup-btn" onclick="handleSetup()">방 생성</button>
-    <div id="setup-loading" style="text-align:center;display:none"><div class="spinner"></div></div>
-    <div id="setup-error" style="color:var(--red);font-size:13px;text-align:center;display:none"></div>
-  </div>
-
-  <!-- ══════════════════ GAME ══════════════════ -->
-  <div id="game" class="screen hidden">
-
-    <div class="game-header">
-      <span class="game-title">📖 성경마블</span>
-      <span class="room-badge" id="room-badge">----</span>
-    </div>
-
-    <!-- Waiting phase -->
-    <div id="waiting-phase" class="hidden">
-      <div style="padding:16px">
-        <div style="color:var(--muted);font-size:13px;margin-bottom:12px">
-          친구들에게 방 코드를 알려주세요! 🎉
-        </div>
-        <div id="waiting-players"></div>
-        <div id="start-btn-wrap" style="margin-top:12px;display:none">
-          <button class="btn btn-gold" onclick="startGame()">🎮 게임 시작!</button>
-        </div>
-        <div id="waiting-hint" style="color:var(--muted);font-size:13px;text-align:center;margin-top:16px;display:none">
-          방장이 게임을 시작할 때까지 대기 중...
-        </div>
-      </div>
-    </div>
-
-    <!-- Playing phase -->
-    <div id="playing-phase" class="hidden" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
-      <div class="turn-bar" id="turn-bar">
-        <div class="player-row">
-          <span id="turn-emoji" style="font-size:20px"></span>
-          <span id="turn-name" style="font-weight:700;font-size:15px"></span>
-          <span style="color:var(--muted);font-size:13px">의 차례</span>
-        </div>
-        <span class="my-turn-badge hidden" id="my-turn-badge">내 차례!</span>
-      </div>
-
-      <div class="tabs">
-        <button class="tab active" onclick="switchTab('board')" id="tab-board">🗺️ 보드</button>
-        <button class="tab" onclick="switchTab('info')" id="tab-info">👤 내 정보</button>
-        <button class="tab" onclick="switchTab('log')" id="tab-log">📜 기록</button>
-      </div>
-
-      <div id="tc-board" class="tab-content">
-        <div id="board-players"></div>
-        <div id="board-squares"></div>
-      </div>
-      <div id="tc-info" class="tab-content hidden">
-        <div id="info-content"></div>
-      </div>
-      <div id="tc-log" class="tab-content hidden">
-        <div id="log-list"></div>
-      </div>
-
-      <div class="action-bar" id="action-bar">
-        <div class="dice-display hidden" id="dice-display">
-          <div class="dice-box" id="dice-box"></div>
-        </div>
-        <div id="action-content"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ══════════════════ MODAL ══════════════════ -->
-  <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal()">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-title" id="modal-title"></div>
-      <div class="modal-body" id="modal-body"></div>
-      <div id="modal-actions"></div>
-    </div>
-  </div>
-
 </div>
 
-<!-- Firebase SDKs -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update, push, serverTimestamp }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+<div id="setup" class="screen gone">
+  <button class="backbtn" id="bback">←</button>
+  <div style="font-size:56px;text-align:center" id="sico">🏠</div>
+  <div style="font-size:26px;font-weight:900;color:var(--gold);text-align:center" id="stitle">방 만들기</div>
+  <input class="inp" id="ni" placeholder="닉네임 입력" maxlength="10">
+  <div id="ri" class="gone"><input class="inp" id="rc" placeholder="방 코드 5자리" maxlength="5"></div>
+  <button class="btn gold" id="sbtn">방 생성</button>
+  <div id="sld" class="gone" style="text-align:center"><div class="spin"></div></div>
+  <div id="serr" style="color:var(--red);font-size:13px;text-align:center;display:none"></div>
+</div>
 
-// ═══════════════════════════════════════════════════════
-// 🔧 여기에 Firebase 설정을 입력하세요!
-// ═══════════════════════════════════════════════════════
-const FIREBASE_CONFIG = {
-  apiKey: "여기에_입력",
-  authDomain: "여기에_입력",
-  databaseURL: "여기에_입력",
-  projectId: "여기에_입력",
-  storageBucket: "여기에_입력",
-  messagingSenderId: "여기에_입력",
-  appId: "여기에_입력"
-};
-// ═══════════════════════════════════════════════════════
-
-// ══════════════════════════════════════
-// GAME DATA
-// ══════════════════════════════════════
-const SQUARES = [
-  {id:0,type:"start",name:"시작/마침",icon:"✈️"},
-  {id:1,type:"land",name:"소돔",price:15,toll:2,stars:1,desc:"고모라와 함께 멸망한 도시"},
-  {id:2,type:"land",name:"우르",price:22,toll:5,stars:2,desc:"아브라함의 고향"},
-  {id:3,type:"land",name:"욥바",price:33,toll:10,stars:1,desc:"요나가 배를 탄 항구"},
-  {id:4,type:"land",name:"단",price:25,toll:7,stars:2,desc:"이스라엘 북쪽 경계"},
-  {id:5,type:"land",name:"하란",price:37,toll:9,stars:2,desc:"아브라함이 머문 도시"},
-  {id:6,type:"land",name:"가사",price:40,toll:11,stars:2,desc:"블레셋의 도시"},
-  {id:7,type:"key",name:"천국열쇠",icon:"🔑"},
-  {id:8,type:"land",name:"라기스",price:42,toll:13,stars:1,desc:"유다의 요새 도시"},
-  {id:9,type:"land",name:"브엘세바",price:55,toll:27,stars:4,desc:"이삭이 우물을 판 곳"},
-  {id:10,type:"land",name:"미디안",price:57,toll:19,stars:2,desc:"모세가 피신한 광야"},
-  {id:11,type:"land",name:"세겜",price:43,toll:17,stars:2,desc:"야곱이 땅을 산 도시"},
-  {id:12,type:"land",name:"아모리",price:59,toll:23,stars:2,desc:"가나안 족속"},
-  {id:13,type:"land",name:"라오디게아",price:65,toll:25,stars:3,desc:"일곱 교회 중 하나"},
-  {id:14,type:"wilderness",name:"광야",icon:"🏜️"},
-  {id:15,type:"land",name:"두로",price:72,toll:27,stars:2,desc:"페니키아의 항구 도시"},
-  {id:16,type:"land",name:"랍바",price:67,toll:29,stars:2,desc:"암몬의 수도"},
-  {id:17,type:"land",name:"벧엘",price:75,toll:50,stars:5,desc:"야곱이 하나님을 만난 곳"},
-  {id:18,type:"land",name:"루스드라",price:62,toll:26,stars:3,desc:"바울이 복음을 전한 도시"},
-  {id:19,type:"key",name:"천국열쇠",icon:"🔑"},
-  {id:20,type:"land",name:"데살로니가",price:80,toll:34,stars:3,desc:"바울의 선교지"},
-  {id:21,type:"land",name:"다메섹",price:79,toll:30,stars:3,desc:"바울이 회심한 곳"},
-  {id:22,type:"land",name:"기브아",price:70,toll:29,stars:3,desc:"사울 왕의 고향"},
-  {id:23,type:"land",name:"이스르엘",price:80,toll:36,stars:3,desc:"아합의 궁전이 있던 곳"},
-  {id:24,type:"land",name:"수산",price:90,toll:49,stars:4,desc:"에스더가 살던 궁전"},
-  {id:25,type:"key",name:"천국열쇠",icon:"🔑"},
-  {id:26,type:"land",name:"안디옥",price:86,toll:44,stars:3,desc:"처음 크리스천이라 불린 곳"},
-  {id:27,type:"land",name:"앗수르",price:100,toll:46,stars:4,desc:"이스라엘을 멸망시킨 제국"},
-  {id:28,type:"land",name:"다소",price:84,toll:37,stars:3,desc:"바울의 고향"},
-  {id:29,type:"land",name:"아말렉",price:110,toll:42,stars:2,desc:"이스라엘의 숙적"},
-  {id:30,type:"land",name:"악메다",price:115,toll:55,stars:2,desc:"메데 왕국의 도시"},
-  {id:31,type:"land",name:"므깃도",price:120,toll:56,stars:3,desc:"아마겟돈의 장소"},
-  {id:32,type:"land",name:"비손 강",price:122,toll:122,stars:3,desc:"에덴의 네 강 중 하나"},
-  {id:33,type:"train",name:"구원열차",icon:"🚂"},
-  {id:34,type:"land",name:"요단 강",price:50,toll:200,stars:6,desc:"예수님이 세례받으신 강"},
-  {id:35,type:"land",name:"사마리아",price:135,toll:80,stars:4,desc:"사마리아 여인의 고향"},
-  {id:36,type:"land",name:"고린도",price:130,toll:76,stars:3,desc:"바울이 편지를 쓴 교회"},
-  {id:37,type:"land",name:"골로새",price:137,toll:82,stars:3,desc:"바울의 서신을 받은 교회"},
-  {id:38,type:"land",name:"빌립보",price:143,toll:85,stars:4,desc:"유럽 첫 교회가 세워진 곳"},
-  {id:39,type:"land",name:"헤브론",price:150,toll:95,stars:5,desc:"아브라함의 장지"},
-  {id:40,type:"key",name:"천국열쇠",icon:"🔑"},
-  {id:41,type:"land",name:"여리고",price:170,toll:75,stars:3,desc:"여호수아가 무너뜨린 성"},
-  {id:42,type:"land",name:"가나",price:159,toll:80,stars:4,desc:"예수님의 첫 기적"},
-  {id:43,type:"land",name:"갈라디아",price:180,toll:97,stars:4,desc:"바울이 편지를 쓴 지역"},
-  {id:44,type:"land",name:"에베소",price:174,toll:87,stars:4,desc:"디아나 신전이 있던 도시"},
-  {id:45,type:"land",name:"갈멜산",price:188,toll:94,stars:4,desc:"엘리야의 불 기적 장소"},
-  {id:46,type:"land",name:"바벨론",price:200,toll:105,stars:5,desc:"다니엘이 포로로 잡힌 곳"},
-  {id:47,type:"offering",name:"사랑의 헌금",icon:"💌"},
-  {id:48,type:"land",name:"서머나",price:174,toll:100,stars:4,desc:"순교로 유명한 교회"},
-  {id:49,type:"land",name:"에브라임",price:200,toll:150,stars:5,desc:"요셉의 아들 지파"},
-  {id:50,type:"land",name:"벳세다",price:230,toll:170,stars:4,desc:"예수님의 제자들의 고향"},
-  {id:51,type:"land",name:"애굽",price:250,toll:190,stars:6,desc:"이스라엘이 종살이한 땅"},
-  {id:52,type:"land",name:"가버나움",price:300,toll:200,stars:5,desc:"예수님의 사역 본부"},
-  {id:53,type:"land",name:"유다",price:300,toll:250,stars:6,desc:"남왕국의 중심지"},
-  {id:54,type:"key",name:"천국열쇠",icon:"🔑"},
-  {id:55,type:"land",name:"감람산",price:310,toll:230,stars:6,desc:"예수님이 기도하신 산"},
-  {id:56,type:"land",name:"기혼 강",price:222,toll:220,stars:6,desc:"에덴의 네 강 중 하나"},
-  {id:57,type:"land",name:"유브라데스 강",price:310,toll:250,stars:7,desc:"메소포타미아의 대강"},
-  {id:58,type:"land",name:"시내산",price:350,toll:280,stars:7,desc:"모세가 십계명 받은 산"},
-  {id:59,type:"key",name:"천국열쇠",icon:"🔑"},
-  {id:60,type:"land",name:"나사렛",price:350,toll:280,stars:7,desc:"예수님이 자란 마을"},
-  {id:61,type:"land",name:"베들레헴",price:400,toll:300,stars:7,desc:"예수님이 태어난 곳"},
-  {id:62,type:"land",name:"시온산",price:450,toll:300,stars:8,desc:"하나님의 거룩한 산"},
-  {id:63,type:"land",name:"예루살렘",price:460,toll:350,stars:8,desc:"다윗의 도성"},
-  {id:64,type:"land",name:"천국",price:500,toll:450,stars:12,desc:"천국은 침노하는 자의 것"},
-];
-const TOTAL = 65;
-
-const KEY_CARDS = [
-  {id:1,text:"은행에서 100만원 받기",type:"money",amount:100,keepable:false},
-  {id:2,text:"은행에서 50만원 받기",type:"money",amount:50,keepable:false},
-  {id:3,text:"시작/도착으로 이동",type:"move_start",keepable:false},
-  {id:4,text:"다른 사람의 땅 하나를 가져오세요! (즉시 사용)",type:"steal",keepable:false},
-  {id:5,text:"주사위 한 번 더 던지기",type:"extra_dice",keepable:true},
-  {id:6,text:"내 땅 하나를 원하는 사람에게 나눠주세요",type:"give_land",keepable:false},
-  {id:7,text:"은행에서 1000만원 받기!",type:"money",amount:1000,keepable:false},
-  {id:8,text:"사랑의 헌금으로 이동!",type:"move_offering",keepable:false},
-  {id:9,text:"2열에서 원하는 땅 하나 가지기",type:"take_row2",keepable:false},
-  {id:10,text:"은행에서 500만원 받기!",type:"money",amount:500,keepable:false},
-  {id:11,text:"사랑의 헌금 100만원 하기",type:"pay_offering",amount:100,keepable:false},
-  {id:12,text:"예수님의 삶을 깊이 체험하세요. 광야로 이동!",type:"move_wilderness",keepable:false},
-  {id:13,text:"사랑의 헌금 50만원 하기",type:"pay_offering",amount:50,keepable:false},
-  {id:14,text:"구하여도 받지 못함은 정욕으로 쓰려고 잘못 구하기 때문이라 (꽝!) — 큰소리로 낭독하세요!",type:"blank",keepable:false},
-  {id:15,text:"광야에서 바로 나올 수 있습니다! (보관 가능)",type:"escape_wilderness",keepable:true},
-  {id:16,text:"구원열차로 이동하세요!",type:"move_train",keepable:false},
-  {id:17,text:"남에게 대접 받고 싶은 대로 너희도 남을 대접하라 (꽝!) — 큰소리로 낭독하세요!",type:"blank",keepable:false},
-  {id:18,text:"사랑하는 자들아 우리가 서로 사랑하자 (꽝!) — 큰소리로 낭독하세요!",type:"blank",keepable:false},
-  {id:19,text:"통행권 — 통행료 없이 빠져나올 수 있습니다! (보관 가능)",type:"toll_free",keepable:true},
-];
-
-const COLORS = ["#E74C3C","#3498DB","#2ECC71","#F39C12","#9B59B6","#1ABC9C"];
-const EMOJIS = ["🔴","🔵","🟢","🟡","🟣","🩵"];
-
-function calcInitMoney(){return 3*1+2*2+3*5+5*10+2*20+2*50+2*100+1*500;}
-function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-
-// ══════════════════════════════════════
-// STATE
-// ══════════════════════════════════════
-let db, roomRef, gameRef, logRef;
-let myId = "", myName = "", roomId = "";
-let gameState = null;
-let setupMode = "create";
-let unsubGame = null, unsubLog = null;
-let pendingAction = null; // {type, ...}
-let lastLogCount = 0;
-
-// ══════════════════════════════════════
-// FIREBASE INIT
-// ══════════════════════════════════════
-function initFirebase(){
-  if(FIREBASE_CONFIG.apiKey === "여기에_입력"){
-    document.getElementById("firebase-warning").style.display = "block";
-    return false;
-  }
-  try {
-    const app = initializeApp(FIREBASE_CONFIG);
-    db = getDatabase(app);
-    return true;
-  } catch(e){
-    document.getElementById("firebase-warning").style.display = "block";
-    return false;
-  }
-}
-
-// ══════════════════════════════════════
-// UI HELPERS
-// ══════════════════════════════════════
-function showScreen(id){
-  ["lobby","setup","game"].forEach(s=>document.getElementById(s).classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
-window.showScreen = showScreen;
-
-window.showSetup = function(mode){
-  if(!initFirebase()) return;
-  setupMode = mode;
-  document.getElementById("setup-icon").textContent = mode==="create"?"🏠":"🚪";
-  document.getElementById("setup-title").textContent = mode==="create"?"방 만들기":"방 참가하기";
-  document.getElementById("setup-btn").textContent = mode==="create"?"방 생성":"참가하기";
-  document.getElementById("room-input-wrap").style.display = mode==="join"?"block":"none";
-  document.getElementById("setup-error").style.display = "none";
-  showScreen("setup");
-};
-
-window.handleSetup = async function(){
-  const name = document.getElementById("name-input").value.trim();
-  if(!name){showError("닉네임을 입력해주세요");return;}
-  document.getElementById("setup-loading").style.display="block";
-  document.getElementById("setup-btn").disabled=true;
-  if(setupMode==="create") await createRoom(name);
-  else {
-    const code = document.getElementById("room-input").value.trim().toUpperCase();
-    if(!code||code.length!==5){showError("방 코드 5자리를 입력해주세요");document.getElementById("setup-loading").style.display="none";document.getElementById("setup-btn").disabled=false;return;}
-    await joinRoom(name, code);
-  }
-};
-
-function showError(msg){
-  const el = document.getElementById("setup-error");
-  el.textContent = msg; el.style.display = "block";
-  document.getElementById("setup-loading").style.display="none";
-  document.getElementById("setup-btn").disabled=false;
-}
-
-function diceEmoji(n){return["","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣"][n];}
-
-// ══════════════════════════════════════
-// ROOM MANAGEMENT
-// ══════════════════════════════════════
-async function createRoom(name){
-  myId = "p_"+Math.random().toString(36).slice(2,9);
-  myName = name;
-  roomId = Math.random().toString(36).slice(2,7).toUpperCase();
-  const state = buildInitialState();
-  roomRef = ref(db,"rooms/"+roomId);
-  gameRef = ref(db,"rooms/"+roomId+"/state");
-  logRef = ref(db,"rooms/"+roomId+"/log");
-  await set(roomRef, {
-    state,
-    log:["🎉 방이 생성됐어요! 방 코드: "+roomId]
-  });
-  enterGame();
-}
-
-async function joinRoom(name, code){
-  const snap = await get(ref(db,"rooms/"+code));
-  if(!snap.exists()){showError("방을 찾을 수 없습니다");return;}
-  const data = snap.val();
-  if(data.state.phase!=="waiting"){showError("이미 시작된 게임입니다");return;}
-  if(data.state.players.length>=6){showError("방이 꽉 찼습니다");return;}
-  myId = "p_"+Math.random().toString(36).slice(2,9);
-  myName = name;
-  roomId = code;
-  const idx = data.state.players.length;
-  const newPlayer = makePlayer(idx);
-  const updatedPlayers = [...data.state.players, newPlayer];
-  const log = [...(data.log?Object.values(data.log):[]), myName+"님이 입장했습니다! 👋"];
-  roomRef = ref(db,"rooms/"+roomId);
-  gameRef = ref(db,"rooms/"+roomId+"/state");
-  logRef = ref(db,"rooms/"+roomId+"/log");
-  await update(ref(db,"rooms/"+roomId+"/state"),{players: updatedPlayers});
-  await push(logRef, myName+"님이 입장했습니다! 👋");
-  enterGame();
-}
-
-function buildInitialState(){
-  return {
-    phase:"waiting",
-    players:[makePlayer(0)],
-    currentTurn:0,
-    landOwners:{},
-    offeringPool:0,
-    keyDeck:shuffle(KEY_CARDS.map(c=>c.id)),
-    consecutiveDoubles:0,
-    hostId:myId,
-  };
-}
-
-function makePlayer(idx){
-  return {
-    id:myId, name:myName,
-    money:calcInitMoney(), pos:0,
-    lands:[], stars:0,
-    inWilderness:false, wildernessCount:0,
-    cards:[],
-    color:COLORS[idx], emoji:EMOJIS[idx]
-  };
-}
-
-function enterGame(){
-  document.getElementById("room-badge").textContent = "방 코드: "+roomId;
-  showScreen("game");
-  subscribeGame();
-}
-
-function subscribeGame(){
-  if(unsubGame) unsubGame();
-  if(unsubLog) unsubLog();
-  unsubGame = onValue(gameRef, snap=>{
-    if(!snap.exists()) return;
-    gameState = snap.val();
-    renderGame();
-  });
-  unsubLog = onValue(logRef, snap=>{
-    if(!snap.exists()) return;
-    const entries = Object.values(snap.val()).reverse();
-    const list = document.getElementById("log-list");
-    list.innerHTML = entries.map(e=>`<div class="log-entry">${e}</div>`).join("");
-  });
-}
-
-// ══════════════════════════════════════
-// RENDER
-// ══════════════════════════════════════
-function renderGame(){
-  if(!gameState) return;
-  if(gameState.phase==="waiting") renderWaiting();
-  else renderPlaying();
-}
-
-function renderWaiting(){
-  document.getElementById("waiting-phase").classList.remove("hidden");
-  document.getElementById("playing-phase").classList.add("hidden");
-  const list = document.getElementById("waiting-players");
-  list.innerHTML = gameState.players.map(p=>`
-    <div class="waiting-player">
-      <span style="font-size:26px">${p.emoji}</span>
-      <span style="color:${p.color};font-weight:700">${p.name}</span>
-      ${p.id===myId?'<span style="color:var(--blue);font-size:12px">(나)</span>':''}
-    </div>
-  `).join("");
-  const isHost = gameState.players[0]?.id===myId;
-  document.getElementById("start-btn-wrap").style.display = isHost?"block":"none";
-  document.getElementById("waiting-hint").style.display = isHost?"none":"block";
-}
-
-function renderPlaying(){
-  document.getElementById("waiting-phase").classList.add("hidden");
-  document.getElementById("playing-phase").classList.remove("hidden");
-
-  const cur = gameState.players[gameState.currentTurn];
-  const isMyTurn = cur?.id===myId;
-  const me = gameState.players.find(p=>p.id===myId);
-
-  // Turn bar
-  const tb = document.getElementById("turn-bar");
-  tb.className = "turn-bar "+(isMyTurn?"my-turn":"other-turn");
-  document.getElementById("turn-emoji").textContent = cur?.emoji||"";
-  document.getElementById("turn-name").textContent = cur?.name||"";
-  const badge = document.getElementById("my-turn-badge");
-  badge.classList.toggle("hidden", !isMyTurn);
-
-  // Board
-  renderBoard(isMyTurn, me);
-  // Info
-  renderInfo(me);
-  // Actions
-  renderActions(isMyTurn, me, cur);
-}
-
-function renderBoard(isMyTurn, me){
-  // Player summary
-  const ps = document.getElementById("board-players");
-  ps.innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-    ${gameState.players.map(p=>`
-      <div class="score-card" style="border:1px solid ${p.id===myId?p.color:"transparent"}">
-        <div class="player-row"><span>${p.emoji}</span><span style="color:${p.color};font-size:13px;font-weight:700">${p.name}</span></div>
-        <div style="color:var(--gold);font-size:12px">💰 ${p.money.toLocaleString()}만</div>
-        <div style="color:#ffd700;font-size:12px">⭐ ${p.stars}</div>
-        ${p.inWilderness?'<div style="color:var(--red);font-size:11px">🏜️ 광야</div>':""}
+<div id="game" class="screen gone">
+  <div class="ghdr">
+    <span class="gtitle">📖 성경마블</span>
+    <span class="rbadge" id="rbadge">----</span>
+  </div>
+  <div id="pwait" class="gone" style="padding:16px;overflow-y:auto">
+    <div style="color:var(--muted);font-size:13px;margin-bottom:12px">친구들에게 방 코드를 알려주세요! 🎉</div>
+    <div id="wplayers"></div>
+    <button class="btn gold gone" id="bstart" style="margin-top:12px">🎮 게임 시작!</button>
+    <div id="whint" class="gone" style="color:var(--muted);font-size:13px;text-align:center;margin-top:16px">방장이 게임을 시작할 때까지 대기 중...</div>
+  </div>
+  <div id="pplay" class="pplay gone">
+    <div class="tbar" id="tbar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="temoji" style="font-size:20px"></span>
+        <span id="tname" style="font-weight:700;font-size:15px"></span>
+        <span style="color:var(--muted);font-size:13px">의 차례</span>
       </div>
-    `).join("")}
-  </div>`;
+      <span class="mybadge gone" id="mbadge">내 차례!</span>
+    </div>
+    <div class="tabs">
+      <button class="tab on" data-t="board">🗺️ 보드</button>
+      <button class="tab" data-t="info">👤 내 정보</button>
+      <button class="tab" data-t="log">📜 기록</button>
+    </div>
+    <div id="tb" class="tc"></div>
+    <div id="ti" class="tc gone"></div>
+    <div id="tl" class="tc gone"></div>
+    <div class="abar">
+      <div id="dd" class="gone" style="text-align:center"></div>
+      <div id="ac"></div>
+    </div>
+  </div>
+</div>
 
-  // Squares
-  const playersByPos = {};
-  gameState.players.forEach(p=>{ (playersByPos[p.pos]||=[]).push(p); });
-  const owners = gameState.landOwners||{};
+<div class="mov gone" id="mov">
+  <div class="mo">
+    <div style="font-size:18px;font-weight:900;color:var(--gold);margin-bottom:8px" id="mtitle"></div>
+    <div style="color:var(--text);font-size:15px;line-height:1.6;margin-bottom:20px" id="mbody"></div>
+    <div id="mact"></div>
+  </div>
+</div>
+</div>
 
-  const sq = document.getElementById("board-squares");
-  sq.innerHTML = SQUARES.map(s=>{
-    const here = playersByPos[s.id]||[];
-    const ownerP = owners[s.id]?gameState.players.find(p=>p.id===owners[s.id]):null;
-    const isMine = ownerP?.id===myId;
-    const isHere = here.some(p=>p.id===myId);
-    return `<div class="sq ${isMine?"mine":""} ${isHere?"here":""}">
-      <span class="sq-idx">${s.id}</span>
-      <span class="sq-icon">${s.type==="land"?"🏛️":(s.icon||"")}</span>
-      <span class="sq-name">${s.name}</span>
-      ${s.type==="land"?`<span class="sq-price">${s.price}만</span>`:""}
-      ${ownerP?`<span class="sq-owner" style="background:${ownerP.color}30;color:${ownerP.color};padding:1px 6px;border-radius:6px;font-size:11px">${ownerP.emoji}</span>`:""}
-      <div class="sq-players">${here.map(p=>`<span>${p.emoji}</span>`).join("")}</div>
-    </div>`;
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+var FC={apiKey:"AIzaSyA6Jwy0uPH6RpFPANKWoZPuEj2eBfndvsw",authDomain:"bible-marvel.firebaseapp.com",databaseURL:"https://bible-marvel-default-rtdb.firebaseio.com",projectId:"bible-marvel",storageBucket:"bible-marvel.firebasestorage.app",messagingSenderId:"878688160070",appId:"1:878688160070:web:9f2ea8f3a32adc7746bd47"};
+
+var SQ=[{id:0,type:"start",name:"시작/마침",icon:"✈️"},{id:1,type:"land",name:"소돔",price:15,toll:2,stars:1,desc:"고모라와 함께 멸망한 도시"},{id:2,type:"land",name:"우르",price:22,toll:5,stars:2,desc:"아브라함의 고향"},{id:3,type:"land",name:"욥바",price:33,toll:10,stars:1,desc:"요나가 배를 탄 항구"},{id:4,type:"land",name:"단",price:25,toll:7,stars:2,desc:"이스라엘 북쪽 경계"},{id:5,type:"land",name:"하란",price:37,toll:9,stars:2,desc:"아브라함이 머문 도시"},{id:6,type:"land",name:"가사",price:40,toll:11,stars:2,desc:"블레셋의 도시"},{id:7,type:"key",name:"천국열쇠",icon:"🔑"},{id:8,type:"land",name:"라기스",price:42,toll:13,stars:1,desc:"유다의 요새 도시"},{id:9,type:"land",name:"브엘세바",price:55,toll:27,stars:4,desc:"이삭이 우물을 판 곳"},{id:10,type:"land",name:"미디안",price:57,toll:19,stars:2,desc:"모세가 피신한 광야"},{id:11,type:"land",name:"세겜",price:43,toll:17,stars:2,desc:"야곱이 땅을 산 도시"},{id:12,type:"land",name:"아모리",price:59,toll:23,stars:2,desc:"가나안 족속"},{id:13,type:"land",name:"라오디게아",price:65,toll:25,stars:3,desc:"일곱 교회 중 하나"},{id:14,type:"wilderness",name:"광야",icon:"🏜️"},{id:15,type:"land",name:"두로",price:72,toll:27,stars:2,desc:"페니키아의 항구 도시"},{id:16,type:"land",name:"랍바",price:67,toll:29,stars:2,desc:"암몬의 수도"},{id:17,type:"land",name:"벧엘",price:75,toll:50,stars:5,desc:"야곱이 하나님을 만난 곳"},{id:18,type:"land",name:"루스드라",price:62,toll:26,stars:3,desc:"바울이 복음을 전한 도시"},{id:19,type:"key",name:"천국열쇠",icon:"🔑"},{id:20,type:"land",name:"데살로니가",price:80,toll:34,stars:3,desc:"바울의 선교지"},{id:21,type:"land",name:"다메섹",price:79,toll:30,stars:3,desc:"바울이 회심한 곳"},{id:22,type:"land",name:"기브아",price:70,toll:29,stars:3,desc:"사울 왕의 고향"},{id:23,type:"land",name:"이스르엘",price:80,toll:36,stars:3,desc:"아합의 궁전이 있던 곳"},{id:24,type:"land",name:"수산",price:90,toll:49,stars:4,desc:"에스더가 살던 궁전"},{id:25,type:"key",name:"천국열쇠",icon:"🔑"},{id:26,type:"land",name:"안디옥",price:86,toll:44,stars:3,desc:"처음 크리스천이라 불린 곳"},{id:27,type:"land",name:"앗수르",price:100,toll:46,stars:4,desc:"이스라엘을 멸망시킨 제국"},{id:28,type:"land",name:"다소",price:84,toll:37,stars:3,desc:"바울의 고향"},{id:29,type:"land",name:"아말렉",price:110,toll:42,stars:2,desc:"이스라엘의 숙적"},{id:30,type:"land",name:"악메다",price:115,toll:55,stars:2,desc:"메데 왕국의 도시"},{id:31,type:"land",name:"므깃도",price:120,toll:56,stars:3,desc:"아마겟돈의 장소"},{id:32,type:"land",name:"비손 강",price:122,toll:122,stars:3,desc:"에덴의 네 강 중 하나"},{id:33,type:"train",name:"구원열차",icon:"🚂"},{id:34,type:"land",name:"요단 강",price:50,toll:200,stars:6,desc:"예수님이 세례받으신 강"},{id:35,type:"land",name:"사마리아",price:135,toll:80,stars:4,desc:"사마리아 여인의 고향"},{id:36,type:"land",name:"고린도",price:130,toll:76,stars:3,desc:"바울이 편지를 쓴 교회"},{id:37,type:"land",name:"골로새",price:137,toll:82,stars:3,desc:"바울의 서신을 받은 교회"},{id:38,type:"land",name:"빌립보",price:143,toll:85,stars:4,desc:"유럽 첫 교회가 세워진 곳"},{id:39,type:"land",name:"헤브론",price:150,toll:95,stars:5,desc:"아브라함의 장지"},{id:40,type:"key",name:"천국열쇠",icon:"🔑"},{id:41,type:"land",name:"여리고",price:170,toll:75,stars:3,desc:"여호수아가 무너뜨린 성"},{id:42,type:"land",name:"가나",price:159,toll:80,stars:4,desc:"예수님의 첫 기적"},{id:43,type:"land",name:"갈라디아",price:180,toll:97,stars:4,desc:"바울이 편지를 쓴 지역"},{id:44,type:"land",name:"에베소",price:174,toll:87,stars:4,desc:"디아나 신전이 있던 도시"},{id:45,type:"land",name:"갈멜산",price:188,toll:94,stars:4,desc:"엘리야의 불 기적 장소"},{id:46,type:"land",name:"바벨론",price:200,toll:105,stars:5,desc:"다니엘이 포로로 잡힌 곳"},{id:47,type:"offering",name:"사랑의 헌금",icon:"💌"},{id:48,type:"land",name:"서머나",price:174,toll:100,stars:4,desc:"순교로 유명한 교회"},{id:49,type:"land",name:"에브라임",price:200,toll:150,stars:5,desc:"요셉의 아들 지파"},{id:50,type:"land",name:"벳세다",price:230,toll:170,stars:4,desc:"예수님의 제자들의 고향"},{id:51,type:"land",name:"애굽",price:250,toll:190,stars:6,desc:"이스라엘이 종살이한 땅"},{id:52,type:"land",name:"가버나움",price:300,toll:200,stars:5,desc:"예수님의 사역 본부"},{id:53,type:"land",name:"유다",price:300,toll:250,stars:6,desc:"남왕국의 중심지"},{id:54,type:"key",name:"천국열쇠",icon:"🔑"},{id:55,type:"land",name:"감람산",price:310,toll:230,stars:6,desc:"예수님이 기도하신 산"},{id:56,type:"land",name:"기혼 강",price:222,toll:220,stars:6,desc:"에덴의 네 강 중 하나"},{id:57,type:"land",name:"유브라데스 강",price:310,toll:250,stars:7,desc:"메소포타미아의 대강"},{id:58,type:"land",name:"시내산",price:350,toll:280,stars:7,desc:"모세가 십계명 받은 산"},{id:59,type:"key",name:"천국열쇠",icon:"🔑"},{id:60,type:"land",name:"나사렛",price:350,toll:280,stars:7,desc:"예수님이 자란 마을"},{id:61,type:"land",name:"베들레헴",price:400,toll:300,stars:7,desc:"예수님이 태어난 곳"},{id:62,type:"land",name:"시온산",price:450,toll:300,stars:8,desc:"하나님의 거룩한 산"},{id:63,type:"land",name:"예루살렘",price:460,toll:350,stars:8,desc:"다윗의 도성"},{id:64,type:"land",name:"천국",price:500,toll:450,stars:12,desc:"천국은 침노하는 자의 것"}];
+var TOTAL=65;
+var KC=[{id:1,text:"은행에서 100만원 받기",type:"money",amount:100,keep:false},{id:2,text:"은행에서 50만원 받기",type:"money",amount:50,keep:false},{id:3,text:"시작/도착으로 이동",type:"move_start",keep:false},{id:4,text:"다른 사람 땅 하나 가져오기! (즉시)",type:"steal",keep:false},{id:5,text:"주사위 한 번 더! (보관 가능)",type:"extra_dice",keep:true},{id:6,text:"내 땅 하나를 다른 사람에게 나눠주세요",type:"give_land",keep:false},{id:7,text:"은행에서 1000만원 받기!",type:"money",amount:1000,keep:false},{id:8,text:"사랑의 헌금으로 이동!",type:"move_offering",keep:false},{id:9,text:"2열에서 원하는 땅 하나 가지기",type:"take_row2",keep:false},{id:10,text:"은행에서 500만원 받기!",type:"money",amount:500,keep:false},{id:11,text:"사랑의 헌금 100만원",type:"pay_offering",amount:100,keep:false},{id:12,text:"광야로 이동!",type:"move_wilderness",keep:false},{id:13,text:"사랑의 헌금 50만원",type:"pay_offering",amount:50,keep:false},{id:14,text:"꽝! 큰소리로 낭독: 구하여도 받지 못함은 정욕으로 쓰려고 잘못 구하기 때문이라",type:"blank",keep:false},{id:15,text:"광야 즉시 탈출! (보관 가능)",type:"escape_wilderness",keep:true},{id:16,text:"구원열차로 이동!",type:"move_train",keep:false},{id:17,text:"꽝! 큰소리로 낭독: 남에게 대접받고 싶은 대로 너희도 남을 대접하라",type:"blank",keep:false},{id:18,text:"꽝! 큰소리로 낭독: 사랑하는 자들아 우리가 서로 사랑하자",type:"blank",keep:false},{id:19,text:"통행권 - 통행료 면제! (보관 가능)",type:"toll_free",keep:true}];
+var CL=["#E74C3C","#3498DB","#2ECC71","#F39C12","#9B59B6","#1ABC9C"];
+var EM=["🔴","🔵","🟢","🟡","🟣","🩵"];
+function cm(){return 3+4+15+50+40+100+200+500;}
+function shuf(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function de(n){return["","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣"][n];}
+function g(id){return document.getElementById(id);}
+
+var db,rRef,gRef,lRef,myId="",myName="",roomId="",gs=null,mode="create",pa=null;
+
+document.addEventListener("DOMContentLoaded",function(){
+  try{firebase.initializeApp(FC);db=firebase.database();}catch(e){alert("Firebase 오류: "+e.message);return;}
+  g("bc").onclick=function(){showSetup("create");};
+  g("bj").onclick=function(){showSetup("join");};
+  g("bback").onclick=function(){showScr("lobby");};
+  g("sbtn").onclick=handleSetup;
+  g("bstart").onclick=startGame;
+  g("rc").oninput=function(){this.value=this.value.toUpperCase();};
+  document.querySelectorAll(".tab").forEach(function(t){
+    t.onclick=function(){
+      var v=t.dataset.t;
+      document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on");});
+      t.classList.add("on");
+      ["board","info","log"].forEach(function(n){
+        g("t"+n[0]).classList.toggle("gone",n!==v);
+      });
+    };
+  });
+  g("mov").onclick=function(e){if(e.target===g("mov"))g("mov").classList.add("gone");};
+});
+
+function showScr(id){["lobby","setup","game"].forEach(function(s){g(s).classList.add("gone");});g(id).classList.remove("gone");}
+function showSetup(m){
+  mode=m;
+  g("sico").textContent=m==="create"?"🏠":"🚪";
+  g("stitle").textContent=m==="create"?"방 만들기":"방 참가하기";
+  g("sbtn").textContent=m==="create"?"방 생성":"참가하기";
+  g("ri").classList.toggle("gone",m!=="join");
+  g("serr").style.display="none";g("ni").value="";g("rc").value="";
+  showScr("setup");
+}
+function serr(msg){g("serr").textContent=msg;g("serr").style.display="block";g("sld").classList.add("gone");g("sbtn").disabled=false;}
+
+function mkP(idx){return{id:myId,name:myName,money:cm(),pos:0,lands:[],stars:0,inWilderness:false,wildernessCount:0,cards:[],color:CL[idx],emoji:EM[idx]};}
+
+function handleSetup(){
+  var nm=g("ni").value.trim();
+  if(!nm){serr("닉네임을 입력해주세요");return;}
+  g("sld").classList.remove("gone");g("sbtn").disabled=true;g("serr").style.display="none";
+  if(mode==="create"){createRoom(nm);}
+  else{var cd=g("rc").value.trim().toUpperCase();if(!cd||cd.length!==5){serr("방 코드 5자리를 입력해주세요");return;}joinRoom(nm,cd);}
+}
+
+function createRoom(nm){
+  myId="p_"+Math.random().toString(36).slice(2,9);myName=nm;
+  roomId=Math.random().toString(36).slice(2,7).toUpperCase();
+  var st={phase:"waiting",players:[mkP(0)],currentTurn:0,landOwners:{},offeringPool:0,keyDeck:shuf(KC.map(function(c){return c.id;})),consecutiveDoubles:0,hostId:myId};
+  rRef=db.ref("rooms/"+roomId);gRef=db.ref("rooms/"+roomId+"/state");lRef=db.ref("rooms/"+roomId+"/log");
+  rRef.set({state:st,log:{0:"방 생성! 코드: "+roomId}}).then(function(){enterGame();}).catch(function(e){serr("오류: "+e.message);});
+}
+
+function joinRoom(nm,cd){
+  db.ref("rooms/"+cd).once("value").then(function(snap){
+    if(!snap.exists()){serr("방을 찾을 수 없습니다");return;}
+    var d=snap.val();
+    if(d.state.phase!=="waiting"){serr("이미 시작된 게임입니다");return;}
+    var pl=d.state.players||[];
+    if(pl.length>=6){serr("방이 꽉 찼습니다");return;}
+    myId="p_"+Math.random().toString(36).slice(2,9);myName=nm;roomId=cd;
+    var np=mkP(pl.length);pl.push(np);
+    rRef=db.ref("rooms/"+roomId);gRef=db.ref("rooms/"+roomId+"/state");lRef=db.ref("rooms/"+roomId+"/log");
+    gRef.update({players:pl}).then(function(){lRef.push(myName+"님 입장! 👋");enterGame();}).catch(function(e){serr("오류: "+e.message);});
+  }).catch(function(e){serr("오류: "+e.message);});
+}
+
+function enterGame(){g("rbadge").textContent="코드: "+roomId;showScr("game");subGame();}
+
+function subGame(){
+  gRef.on("value",function(snap){if(!snap.exists())return;gs=snap.val();renderGame();});
+  lRef.on("value",function(snap){
+    if(!snap.exists())return;
+    var es=Object.values(snap.val()).reverse();
+    g("tl").innerHTML=es.map(function(e){return"<div class='loge'>"+e+"</div>";}).join("");
+  });
+}
+
+function renderGame(){
+  if(!gs)return;
+  if(gs.phase==="waiting"){
+    g("pwait").classList.remove("gone");g("pplay").classList.add("gone");
+    var pl=gs.players||[];
+    g("wplayers").innerHTML=pl.map(function(p){var m=p.id===myId?"<span style='color:var(--blue);font-size:12px'>(나)</span>":"";return"<div class='wp'><span style='font-size:26px'>"+p.emoji+"</span><span style='color:"+p.color+";font-weight:700'>"+p.name+"</span>"+m+"</div>";}).join("");
+    var isH=pl[0]&&pl[0].id===myId;
+    g("bstart").classList.toggle("gone",!isH);g("whint").classList.toggle("gone",isH);
+  } else {
+    g("pwait").classList.add("gone");g("pplay").classList.remove("gone");
+    var cur=gs.players[gs.currentTurn],isMT=cur&&cur.id===myId,me=gs.players.find(function(p){return p.id===myId;});
+    g("tbar").className="tbar "+(isMT?"myturn":"other");
+    g("temoji").textContent=cur?cur.emoji:"";g("tname").textContent=cur?cur.name:"";
+    g("mbadge").classList.toggle("gone",!isMT);
+    renderBoard(me);renderInfo(me);renderActions(isMT,me,cur);
+  }
+}
+
+function renderBoard(me){
+  var own=gs.landOwners||{},bp={};
+  gs.players.forEach(function(p){(bp[p.pos]=bp[p.pos]||[]).push(p);});
+  var s="<div style='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px'>"
+    +gs.players.map(function(p){return"<div class='sc' style='border:1px solid "+(p.id===myId?p.color:"transparent")+"'><div style='display:flex;align-items:center;gap:5px'><span>"+p.emoji+"</span><span style='color:"+p.color+";font-size:12px;font-weight:700'>"+p.name+"</span></div><div style='color:var(--gold);font-size:11px'>💰"+p.money.toLocaleString()+"만</div><div style='color:#ffd700;font-size:11px'>⭐"+p.stars+"</div>"+(p.inWilderness?"<div style='color:var(--red);font-size:10px'>🏜️광야</div>":"")+"</div>";}).join("")
+    +"</div>";
+  var q=SQ.map(function(sq){
+    var h=bp[sq.id]||[],op=own[sq.id]?gs.players.find(function(p){return p.id===own[sq.id];}):null;
+    var cls="sq"+(op&&op.id===myId?" mine":"")+(h.some(function(p){return p.id===myId;})?" here":"");
+    var ob=op?"<span style='background:"+op.color+"30;color:"+op.color+";padding:1px 6px;border-radius:6px;font-size:11px'>"+op.emoji+"</span>":"";
+    var pd=h.map(function(p){return"<span>"+p.emoji+"</span>";}).join("");
+    var pr=sq.type==="land"?"<span style='font-size:11px;color:var(--blue)'>"+sq.price+"만</span>":"";
+    return"<div class='"+cls+"'><span style='font-size:10px;color:var(--muted);width:18px'>"+sq.id+"</span><span style='font-size:14px'>"+(sq.type==="land"?"🏛️":(sq.icon||""))+"</span><span style='flex:1;font-size:13px;font-weight:700'>"+sq.name+"</span>"+pr+ob+"<div style='display:flex;gap:2px'>"+pd+"</div></div>";
   }).join("");
+  g("tb").innerHTML=s+q;
 }
 
 function renderInfo(me){
-  if(!me){document.getElementById("info-content").innerHTML="";return;}
-  const myLands = (me.lands||[]).map(pos=>({...SQUARES[pos],pos}));
-  const sorted = [...gameState.players].sort((a,b)=>b.stars-a.stars);
-  document.getElementById("info-content").innerHTML = `
-    <div style="background:linear-gradient(135deg,#1a2a1a,#1e3a1e);border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid ${me.color}40">
-      <div class="player-row" style="margin-bottom:12px">
-        <span style="font-size:36px">${me.emoji}</span>
-        <div>
-          <div style="color:${me.color};font-weight:900;font-size:18px">${me.name}</div>
-          ${me.inWilderness?'<div style="color:var(--red);font-size:13px">🏜️ 광야에 갇혀 있음</div>':""}
-        </div>
-      </div>
-      <div class="score-grid">
-        <div class="score-card"><div class="score-label">💰 보유 금액</div><div class="score-val" style="color:var(--gold)">${me.money.toLocaleString()}만원</div></div>
-        <div class="score-card"><div class="score-label">⭐ 별 개수</div><div class="score-val" style="color:#ffd700">${me.stars}개</div></div>
-        <div class="score-card"><div class="score-label">🏛️ 보유 땅</div><div class="score-val">${(me.lands||[]).length}개</div></div>
-        <div class="score-card"><div class="score-label">🃏 보유 카드</div><div class="score-val">${(me.cards||[]).length}개</div></div>
-      </div>
-    </div>
-    ${(me.cards||[]).length>0?`
-      <div style="color:var(--muted);font-size:13px;margin-bottom:8px">🃏 보관 중인 카드</div>
-      ${me.cards.map(cid=>{const c=KEY_CARDS.find(x=>x.id===cid);return`<div class="card" style="color:var(--blue);font-size:13px">🔑 ${c?.text}</div>`;}).join("")}
-    `:""}
-    <div style="color:var(--muted);font-size:13px;margin-bottom:8px;margin-top:8px">🏛️ 보유 땅 (${myLands.length}개)</div>
-    ${myLands.length===0?'<div style="color:var(--muted);font-size:13px">아직 땅이 없습니다.</div>':""}
-    ${myLands.map(l=>`
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-weight:700">${l.name}</div>
-            <div style="color:var(--muted);font-size:12px">${l.desc}</div>
-          </div>
-          <div style="text-align:right">
-            <div style="color:var(--blue);font-size:12px">T:${l.toll}만</div>
-            <div style="font-size:12px">${"⭐".repeat(Math.min(l.stars,6))}</div>
-          </div>
-        </div>
-      </div>
-    `).join("")}
-    <div style="color:var(--muted);font-size:13px;margin-top:16px;margin-bottom:8px">🏆 현재 순위</div>
-    ${sorted.map((p,i)=>`
-      <div class="rank-row">
-        <span class="rank-num ${i===0?"first"}">${i+1}</span>
-        <span style="font-size:18px">${p.emoji}</span>
-        <span style="flex:1;color:${p.color};font-weight:700">${p.name}</span>
-        <span style="color:#ffd700">⭐ ${p.stars}</span>
-        <span style="color:var(--gold);font-size:12px">💰${p.money.toLocaleString()}만</span>
-      </div>
-    `).join("")}
-  `;
+  if(!me){g("ti").innerHTML="";return;}
+  var ml=(me.lands||[]).map(function(pos){return Object.assign({pos:pos},SQ[pos]);});
+  var sr=gs.players.slice().sort(function(a,b){return b.stars-a.stars;});
+  var cd=(me.cards||[]).length>0?"<div style='color:var(--muted);font-size:13px;margin-bottom:8px'>🃏 보관 카드</div>"+(me.cards||[]).map(function(cid){var c=KC.find(function(x){return x.id===cid;});return"<div class='card' style='color:var(--blue);font-size:13px'>🔑 "+(c?c.text:"")+"</div>";}).join(""):"";
+  var ll=ml.length===0?"<div style='color:var(--muted);font-size:13px'>아직 땅이 없습니다.</div>":ml.map(function(l){return"<div class='card'><div style='display:flex;justify-content:space-between'><div><div style='font-weight:700'>"+l.name+"</div><div style='color:var(--muted);font-size:12px'>"+l.desc+"</div></div><div style='text-align:right'><div style='color:var(--blue);font-size:12px'>T:"+l.toll+"만</div><div style='font-size:11px'>"+"⭐".repeat(Math.min(l.stars,6))+"</div></div></div></div>";}).join("");
+  var rl=sr.map(function(p,i){return"<div class='rrow'><span style='font-weight:900;color:"+(i===0?"var(--gold)":"var(--muted)")+";width:22px'>"+(i+1)+"</span><span style='font-size:18px'>"+p.emoji+"</span><span style='flex:1;color:"+p.color+";font-weight:700'>"+p.name+"</span><span style='color:#ffd700'>⭐"+p.stars+"</span><span style='color:var(--gold);font-size:12px'>💰"+p.money.toLocaleString()+"만</span></div>";}).join("");
+  g("ti").innerHTML="<div style='background:linear-gradient(135deg,#1a2a1a,#1e3a1e);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid "+me.color+"40'><div style='display:flex;align-items:center;gap:12px;margin-bottom:12px'><span style='font-size:36px'>"+me.emoji+"</span><div><div style='color:"+me.color+";font-weight:900;font-size:18px'>"+me.name+"</div>"+(me.inWilderness?"<div style='color:var(--red);font-size:13px'>🏜️ 광야에 갇혀 있음</div>":"")+"</div></div><div class='sgrid'><div class='sc'><label>💰 보유 금액</label><b style='color:var(--gold)'>"+me.money.toLocaleString()+"만</b></div><div class='sc'><label>⭐ 별</label><b style='color:#ffd700'>"+me.stars+"개</b></div><div class='sc'><label>🏛️ 땅</label><b>"+(me.lands||[]).length+"개</b></div><div class='sc'><label>🃏 카드</label><b>"+(me.cards||[]).length+"개</b></div></div></div>"+cd+"<div style='color:var(--muted);font-size:13px;margin-bottom:8px;margin-top:8px'>🏛️ 보유 땅</div>"+ll+"<div style='color:var(--muted);font-size:13px;margin-top:16px;margin-bottom:8px'>🏆 순위</div>"+rl;
 }
 
-function renderActions(isMyTurn, me, cur){
-  const ac = document.getElementById("action-content");
-  if(!isMyTurn){
-    ac.innerHTML=`<div style="text-align:center;color:var(--muted);font-size:14px;padding:8px 0">${cur?.name}의 차례입니다...</div>`;
-    return;
+function renderActions(isMT,me,cur){
+  var ac=g("ac");
+  if(!isMT){ac.innerHTML="<div style='text-align:center;color:var(--muted);font-size:14px;padding:8px 0'>"+(cur?cur.name:"")+"의 차례입니다...</div>";return;}
+  var sq=me?SQ[me.pos]:null,own=gs.landOwners||{};
+  if(me&&me.inWilderness&&pa&&pa.type==="wilderness_choice"){
+    ac.innerHTML="<div style='color:var(--muted);font-size:13px;text-align:center;margin-bottom:10px'>광야 탈출 방법 선택</div><div class='brow'><button class='btn bsm' style='background:#1a3a6a;color:var(--blue)' id='wd'>🎲 더블 도전</button><button class='btn bsm' style='background:#1a3a2a;color:var(--green)' id='wo'>홀/짝 선택</button></div>";
+    g("wd").onclick=function(){wTry("double");};g("wo").onclick=function(){wTry("oddeven");};return;
   }
-
-  const sq = SQUARES[me.pos];
-  const owners = gameState.landOwners||{};
-  const isLand = sq.type==="land";
-  const canBuy = isLand && !owners[me.pos] && me.money>=sq.price;
-  const isUnowned = isLand && !owners[me.pos];
-
-  // wilderness escape choice
-  if(me.inWilderness && pendingAction?.type==="wilderness_choice"){
-    ac.innerHTML=`
-      <div style="color:var(--muted);font-size:13px;text-align:center;margin-bottom:10px">광야 탈출 방법 선택</div>
-      <div style="display:flex;gap:10px">
-        <button class="oddeven-btn" style="background:#1a3a6a;color:var(--blue)" onclick="wildernessTry('double')">🎲 더블 도전</button>
-        <button class="oddeven-btn" style="background:#1a3a2a;color:var(--green)" onclick="wildernessTry('oddeven')">홀/짝 선택</button>
-      </div>
-    `;
-    return;
+  if(pa&&pa.type==="oddeven_choice"){
+    ac.innerHTML="<div style='color:var(--muted);font-size:13px;text-align:center;margin-bottom:10px'>홀수? 짝수?</div><div class='brow'><button class='btn bsm' style='background:#3a1a3a;color:#e879f9' id='po'>홀수</button><button class='btn bsm' style='background:#1a2a3a;color:var(--blue)' id='pe'>짝수</button></div>";
+    g("po").onclick=function(){oePick("odd");};g("pe").onclick=function(){oePick("even");};return;
   }
-
-  if(pendingAction?.type==="oddeven_choice"){
-    ac.innerHTML=`
-      <div style="color:var(--muted);font-size:13px;text-align:center;margin-bottom:10px">홀수? 짝수?</div>
-      <div style="display:flex;gap:10px">
-        <button class="oddeven-btn" style="background:#3a1a3a;color:#e879f9" onclick="oddevenPick('odd')">홀수</button>
-        <button class="oddeven-btn" style="background:#1a2a3a;color:var(--blue)" onclick="oddevenPick('even')">짝수</button>
-      </div>
-    `;
-    return;
+  if(pa&&pa.type==="train_move"){
+    var opts=SQ.filter(function(s){return s.type==="land";}).map(function(s){return"<option value='"+s.id+"'>"+s.name+"</option>";}).join("");
+    ac.innerHTML="<div style='color:var(--muted);font-size:13px;margin-bottom:8px'>🚂 이동할 곳 선택</div><select class='inp' id='td' style='margin-bottom:10px'>"+opts+"</select><button class='btn gold bsm' id='tgo'>이동!</button>";
+    g("tgo").onclick=confirmTrain;return;
   }
-
-  if(pendingAction?.type==="train_move"){
-    ac.innerHTML=`
-      <div style="color:var(--muted);font-size:13px;margin-bottom:8px">🚂 구원열차 — 이동할 곳을 선택하세요</div>
-      <select class="inp" id="train-dest" style="margin-bottom:10px">
-        ${SQUARES.filter(s=>s.type==="land").map(s=>`<option value="${s.id}">${s.name} (${s.id}번)</option>`).join("")}
-      </select>
-      <button class="btn btn-gold btn-sm" onclick="confirmTrainMove()">이동!</button>
-    `;
-    return;
+  if(pa&&pa.type==="steal_land"){
+    var oth=gs.players.filter(function(p){return p.id!==myId&&(p.lands||[]).length>0;});
+    if(!oth.length){ac.innerHTML="<div style='color:var(--muted);text-align:center'>빼앗을 땅이 없습니다</div>";endTurn();return;}
+    var h2="<div style='color:var(--muted);font-size:13px;margin-bottom:8px'>👊 빼앗을 땅 선택</div>";
+    oth.forEach(function(p){h2+="<div style='margin-bottom:8px'><div style='color:"+p.color+";font-size:12px;margin-bottom:4px'>"+p.emoji+" "+p.name+"</div><div style='display:flex;flex-wrap:wrap;gap:6px'>"+(p.lands||[]).map(function(pos){return"<button class='btn bsm bgray' style='flex:none;width:auto;padding:6px 10px;font-size:12px' data-f='"+p.id+"' data-p='"+pos+"'>"+SQ[pos].name+"</button>";}).join("")+"</div></div>";});
+    ac.innerHTML=h2;ac.querySelectorAll("[data-f]").forEach(function(b){b.onclick=function(){stealL(b.dataset.f,parseInt(b.dataset.p));};});return;
   }
-
-  if(pendingAction?.type==="steal_land"){
-    const others = gameState.players.filter(p=>p.id!==myId&&(p.lands||[]).length>0);
-    if(!others.length){ac.innerHTML=`<div style="color:var(--muted);text-align:center">빼앗을 땅이 없습니다</div>`;endTurn();return;}
-    ac.innerHTML=`
-      <div style="color:var(--muted);font-size:13px;margin-bottom:8px">👊 빼앗을 땅을 선택하세요</div>
-      ${others.map(p=>`
-        <div style="margin-bottom:8px">
-          <div style="color:${p.color};font-size:12px;margin-bottom:4px">${p.emoji} ${p.name}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
-            ${p.lands.map(pos=>`<button class="btn btn-sm btn-gray" style="flex:none;width:auto;padding:6px 10px;font-size:12px" onclick="stealLand('${p.id}',${pos})">${SQUARES[pos].name}</button>`).join("")}
-          </div>
-        </div>
-      `).join("")}
-    `;
-    return;
+  if(pa&&pa.type==="take_row2"){
+    var r2=SQ.filter(function(s){return s.id>=15&&s.id<=32&&s.type==="land"&&!own[s.id];});
+    if(!r2.length){addLog("2열에 가져올 땅이 없습니다.");endTurn();return;}
+    var h3="<div style='color:var(--muted);font-size:13px;margin-bottom:8px'>🗺️ 2열 땅 선택</div><div style='display:flex;flex-wrap:wrap;gap:6px'>"+r2.map(function(s){return"<button class='btn bsm bblue' style='flex:none;width:auto;padding:6px 10px;font-size:12px' data-p='"+s.id+"'>"+s.name+"</button>";}).join("")+"</div>";
+    ac.innerHTML=h3;ac.querySelectorAll("[data-p]").forEach(function(b){b.onclick=function(){takeR2(parseInt(b.dataset.p));};});return;
   }
-
-  if(pendingAction?.type==="take_row2"){
-    const row2lands = SQUARES.filter(s=>s.id>=15&&s.id<=32&&s.type==="land");
-    const owners2 = gameState.landOwners||{};
-    const free = row2lands.filter(s=>!owners2[s.id]||owners2[s.id]===myId);
-    if(!free.length){addLog("2열에 가져올 수 있는 땅이 없습니다.");endTurn();return;}
-    ac.innerHTML=`
-      <div style="color:var(--muted);font-size:13px;margin-bottom:8px">🗺️ 2열에서 가져올 땅 선택</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        ${free.map(s=>`<button class="btn btn-sm btn-blue" style="flex:none;width:auto;padding:6px 10px;font-size:12px" onclick="takeRow2Land(${s.id})">${s.name}</button>`).join("")}
-      </div>
-    `;
-    return;
-  }
-
-  // Normal roll / buy / pass
-  let html = "";
-  if(isUnowned){
-    html += `
-      <div style="background:var(--surface);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--gold)">
-        <div style="font-weight:700;margin-bottom:4px">🏛️ ${sq.name}</div>
-        <div style="color:var(--muted);font-size:12px;margin-bottom:8px">${sq.desc||""}</div>
-        <div style="display:flex;justify-content:space-between;font-size:13px">
-          <span>💰 구매가: <b style="color:var(--gold)">${sq.price}만원</b></span>
-          <span>⭐ 별: <b style="color:#ffd700">${sq.stars}개</b></span>
-          <span>🚶 통행료: <b style="color:var(--blue)">${sq.toll}만원</b></span>
-        </div>
-      </div>
-      <div class="btn-row">
-        ${canBuy?`<button class="btn btn-green btn-sm" onclick="buyLand()">🏡 구매 (${sq.price}만원)</button>`:""}
-        <button class="btn btn-gray btn-sm" onclick="skipBuy()">⏭️ 패스</button>
-      </div>
-    `;
+  var isL=sq&&sq.type==="land",cb=isL&&!own[me.pos]&&me.money>=sq.price,un=isL&&!own[me.pos];
+  if(un){
+    var bb=cb?"<button class='btn bgreen bsm' id='bbuy'>🏡 구매 ("+sq.price+"만원)</button>":"";
+    ac.innerHTML="<div class='card hl' style='margin-bottom:10px'><div style='font-weight:700;margin-bottom:4px'>🏛️ "+sq.name+"</div><div style='color:var(--muted);font-size:12px;margin-bottom:8px'>"+sq.desc+"</div><div style='display:flex;justify-content:space-between;font-size:13px'><span>💰 <b style='color:var(--gold)'>"+sq.price+"만</b></span><span>⭐ <b style='color:#ffd700'>"+sq.stars+"개</b></span><span>🚶 <b style='color:var(--blue)'>"+sq.toll+"만</b></span></div></div><div class='brow'>"+bb+"<button class='btn bgray bsm' id='bskip'>⏭️ 패스</button></div>";
+    if(cb)g("bbuy").onclick=buyL;g("bskip").onclick=skipB;
   } else {
-    html += `<button class="btn btn-gold" onclick="rollDice()">🎲 주사위 굴리기</button>`;
-    if((me.cards||[]).includes(5)){
-      html += `<button class="btn btn-blue btn-sm" style="margin-top:8px" onclick="useExtraDice()">🎲 추가 주사위 사용 (보관 카드)</button>`;
-    }
+    var ex=(me.cards||[]).includes(5)?"<button class='btn bblue bsm' id='bex' style='margin-top:8px'>🎲 추가 주사위 (보관)</button>":"";
+    ac.innerHTML="<button class='btn gold' id='broll'>🎲 주사위 굴리기</button>"+ex;
+    g("broll").onclick=rollDice;
+    if((me.cards||[]).includes(5))g("bex").onclick=useEx;
   }
-  ac.innerHTML = html;
 }
 
-// ══════════════════════════════════════
-// GAME ACTIONS
-// ══════════════════════════════════════
-window.startGame = async function(){
-  if(!gameState||gameState.players.length<2){showModal("알림","최소 2명이 필요합니다!");return;}
-  const st = {...gameState, phase:"playing", currentTurn:0};
-  await set(gameRef, st);
-  await addLog("🎮 게임이 시작되었습니다!");
-};
-
-window.rollDice = async function(){
-  if(!gameState) return;
-  const d1=Math.floor(Math.random()*6)+1;
-  const d2=Math.floor(Math.random()*6)+1;
-  showDice(d1,d2);
-  await processTurn(d1,d2);
-};
-
-window.useExtraDice = async function(){
-  if(!gameState) return;
-  // Remove extra_dice card
-  const st = JSON.parse(JSON.stringify(gameState));
-  const me = st.players.find(p=>p.id===myId);
-  me.cards = me.cards.filter(c=>c!==5);
-  await set(gameRef,st);
-  await addLog(`🎲 ${myName}: 추가 주사위 카드 사용!`);
-  await rollDice();
-};
-
-function showDice(d1,d2){
-  const dd = document.getElementById("dice-display");
-  const db2 = document.getElementById("dice-box");
-  dd.classList.remove("hidden");
-  const isDouble = d1===d2;
-  db2.className = "dice-box"+(isDouble?" double":"");
-  db2.textContent = `${diceEmoji(d1)} ${diceEmoji(d2)}${isDouble?" 🎯 더블!":""}`;
+function startGame(){
+  if(!gs||gs.players.length<2){alert("최소 2명 필요!");return;}
+  var st=JSON.parse(JSON.stringify(gs));st.phase="playing";st.currentTurn=0;
+  gRef.set(st).then(function(){addLog("🎮 게임 시작!");});
 }
 
-async function processTurn(d1,d2){
-  let st = JSON.parse(JSON.stringify(gameState));
-  const cur = st.players[st.currentTurn];
-  const isDouble = d1===d2;
-  let logs = [];
-  logs.push(`🎲 ${cur.name}: 주사위 ${d1}+${d2}=${d1+d2}${isDouble?" (더블!)":""}`);
+function rollDice(){var d1=Math.floor(Math.random()*6)+1,d2=Math.floor(Math.random()*6)+1;showD(d1,d2);procTurn(d1,d2);}
+function useEx(){var st=JSON.parse(JSON.stringify(gs));var me=st.players.find(function(p){return p.id===myId;});me.cards=me.cards.filter(function(c){return c!==5;});gRef.set(st).then(function(){addLog("🎲 추가 주사위!");rollDice();});}
+function showD(d1,d2){var dd=g("dd");dd.classList.remove("gone");var id=d1===d2;dd.innerHTML="<div class='dbox"+(id?" dbl":"")+"'>"+de(d1)+" "+de(d2)+(id?" 🎯 더블!":"")+"</div>";}
 
-  // Wilderness check
+function procTurn(d1,d2){
+  var st=JSON.parse(JSON.stringify(gs)),cur=st.players[st.currentTurn],isD=d1===d2,logs=["🎲 "+cur.name+": "+d1+"+"+d2+"="+(d1+d2)+(isD?" (더블!)":"")];
   if(cur.inWilderness){
-    if(isDouble){
-      cur.inWilderness=false; cur.wildernessCount=0;
-      logs.push(`🌟 ${cur.name}: 더블로 광야 탈출!`);
-      // continue moving
-    } else {
-      // Show choice UI
-      pendingAction={type:"wilderness_choice",d1,d2};
-      await set(gameRef,st);
-      for(const l of logs) await addLog(l);
-      renderActions(true, cur, cur);
-      return;
-    }
+    if(isD){cur.inWilderness=false;cur.wildernessCount=0;logs.push("🌟 "+cur.name+": 광야 탈출!");}
+    else{pa={type:"wilderness_choice"};gRef.set(st).then(function(){logs.forEach(function(l){addLog(l);});renderActions(true,cur,cur);});return;}
   }
-
-  // Double 3 consecutive
-  let consec = (st.consecutiveDoubles||0);
-  if(isDouble){ consec++; } else { consec=0; }
-  st.consecutiveDoubles=consec;
-  if(consec>=3){
-    cur.inWilderness=true; cur.wildernessCount=0;
-    cur.pos=14; st.consecutiveDoubles=0;
-    logs.push(`⚠️ ${cur.name}: 더블 3연속! 광야로!`);
-    await set(gameRef,st);
-    for(const l of logs) await addLog(l);
-    if(!isDouble) advanceTurn(st);
-    await set(gameRef,st);
-    return;
-  }
-
-  // Move
-  const steps=d1+d2;
-  const oldPos=cur.pos;
-  let newPos=(oldPos+steps)%TOTAL;
-  if(newPos<oldPos||newPos===0){
-    if(newPos===0){cur.money+=100;logs.push(`🏠 ${cur.name}: 시작/마침 정착 +100만원`);}
-    else{cur.money+=50;logs.push(`💰 ${cur.name}: 시작 통과 +50만원`);}
-  }
-  cur.pos=newPos;
-  const sq=SQUARES[newPos];
-  logs.push(`📍 ${cur.name}: ${sq.name}에 도착`);
-
-  // Handle square
-  let needBuyPrompt=false;
+  var cs=st.consecutiveDoubles||0;cs=isD?cs+1:0;st.consecutiveDoubles=cs;
+  if(cs>=3){cur.inWilderness=true;cur.wildernessCount=0;cur.pos=14;st.consecutiveDoubles=0;logs.push("⚠️ "+cur.name+": 더블 3연속! 광야!");advTurn(st);gRef.set(st).then(function(){logs.forEach(function(l){addLog(l);});});return;}
+  var steps=d1+d2,op=cur.pos,np=(op+steps)%TOTAL;
+  if(op+steps>=TOTAL){if(np===0){cur.money+=100;logs.push("🏠 시작/마침 +100만");}else{cur.money+=50;logs.push("💰 시작 통과 +50만");}}
+  cur.pos=np;var sq=SQ[np];logs.push("📍 "+cur.name+": "+sq.name);
+  var need=false;
   if(sq.type==="land"){
-    const ownerId=st.landOwners?.[newPos];
-    if(!ownerId){
-      needBuyPrompt=true;
-    } else if(ownerId!==cur.id){
-      const ownerP=st.players.find(p=>p.id===ownerId);
-      const hasTF=(cur.cards||[]).includes(19);
-      if(hasTF){
-        cur.cards=cur.cards.filter(c=>c!==19);
-        logs.push(`🎫 ${cur.name}: 통행권 사용! 통행료 면제`);
-      } else if(ownerP){
-        const toll=sq.toll;
-        const paid=Math.min(cur.money,toll);
-        cur.money-=paid; ownerP.money+=paid;
-        logs.push(`💸 ${cur.name}→${ownerP.name}: 통행료 ${toll}만원`);
-      }
-    } else {
-      logs.push(`🏠 ${cur.name}: 내 땅!`);
-    }
+    var oid=st.landOwners&&st.landOwners[np];
+    if(!oid){need=true;}
+    else if(oid!==cur.id){var owP=st.players.find(function(p){return p.id===oid;});var hasTF=(cur.cards||[]).includes(19);if(hasTF){cur.cards=cur.cards.filter(function(c){return c!==19;});logs.push("🎫 통행권 사용!");}else if(owP){var pd=Math.min(cur.money,sq.toll);cur.money-=pd;owP.money+=pd;logs.push("💸 "+cur.name+"→"+owP.name+": "+sq.toll+"만");}}
+    else{logs.push("🏠 내 땅!");}
   } else if(sq.type==="key"){
-    const deck=[...(st.keyDeck||[])];
-    if(!deck.length){ st.keyDeck=shuffle(KEY_CARDS.map(c=>c.id)); }
-    const cardId=st.keyDeck.shift();
-    st.keyDeck=st.keyDeck;
-    const card=KEY_CARDS.find(c=>c.id===cardId);
-    logs.push(`🔑 ${cur.name}: 천국열쇠! — ${card.text}`);
-    const result=applyKeyCard(st,cur,card);
-    if(result.needAction){ pendingAction=result.needAction; needBuyPrompt=true; }
-  } else if(sq.type==="wilderness"){
-    if(!cur.inWilderness){
-      cur.inWilderness=true; cur.wildernessCount=0;
-      logs.push(`🏜️ ${cur.name}: 광야에 갇혔습니다!`);
-    }
-  } else if(sq.type==="train"){
-    pendingAction={type:"train_move"};
-    needBuyPrompt=true;
-    logs.push(`🚂 ${cur.name}: 구원열차! 원하는 곳으로 이동하세요`);
-  } else if(sq.type==="offering"){
-    const pool=st.offeringPool||0;
-    const has=cur.money;
-    if(has>=100){cur.money-=100;st.offeringPool=pool+100;logs.push(`💌 ${cur.name}: 사랑의 헌금 100만원`);}
-    else if(has>=50){cur.money-=50;st.offeringPool=pool+50;logs.push(`💌 ${cur.name}: 사랑의 헌금 50만원`);}
-    else{logs.push(`💌 ${cur.name}: 헌금할 돈이 부족합니다`);}
-    // Check if offering pool exists - player can collect
-    if(pool>0&&!needBuyPrompt){
-      cur.money+=pool; st.offeringPool=0;
-      logs.push(`💝 ${cur.name}: 헌금 풀 ${pool}만원 획득!`);
-    }
-  } else if(sq.type==="start"){
-    cur.money+=100;
-    logs.push(`🏠 ${cur.name}: 시작 정착 +100만원`);
-  }
-
-  if(!needBuyPrompt && !isDouble){ advanceTurn(st); }
-  else if(!needBuyPrompt && isDouble){ logs.push(`🎯 더블! ${cur.name} 한 번 더!`); }
-
-  await set(gameRef,st);
-  for(const l of logs) await addLog(l);
+    var dk=st.keyDeck||[];if(!dk.length)dk=shuf(KC.map(function(c){return c.id;}));var cid=dk.shift();st.keyDeck=dk;
+    var card=KC.find(function(c){return c.id===cid;});logs.push("🔑 "+cur.name+": "+card.text);
+    var res=applyC(st,cur,card);if(res){pa=res;need=true;}
+  } else if(sq.type==="wilderness"){if(!cur.inWilderness){cur.inWilderness=true;cur.wildernessCount=0;logs.push("🏜️ 광야에 갇혔습니다!");}}
+  else if(sq.type==="train"){pa={type:"train_move"};need=true;logs.push("🚂 구원열차!");}
+  else if(sq.type==="offering"){var pl=st.offeringPool||0;if(cur.money>=100){cur.money-=100;st.offeringPool=pl+100;logs.push("💌 헌금 100만");}else if(cur.money>=50){cur.money-=50;st.offeringPool=pl+50;logs.push("💌 헌금 50만");}if(pl>0){cur.money+=pl;st.offeringPool=0;logs.push("💝 헌금 풀 "+pl+"만 획득!");}}
+  else if(sq.type==="start"){cur.money+=100;logs.push("🏠 +100만");}
+  if(!need&&!isD)advTurn(st);else if(!need&&isD)logs.push("🎯 더블! 한 번 더!");
+  gRef.set(st).then(function(){logs.forEach(function(l){addLog(l);});});
 }
 
-function applyKeyCard(st,cur,card){
-  let needAction=null;
+function applyC(st,cur,card){
   switch(card.type){
-    case"money": cur.money+=card.amount; break;
-    case"move_start": cur.pos=0; cur.money+=100; break;
-    case"move_wilderness": cur.pos=14;cur.inWilderness=true;cur.wildernessCount=0; break;
-    case"move_train": cur.pos=33;needAction={type:"train_move"}; break;
-    case"move_offering": cur.pos=47;break;
-    case"pay_offering": cur.money-=Math.min(cur.money,card.amount);st.offeringPool=(st.offeringPool||0)+card.amount;break;
-    case"steal": needAction={type:"steal_land"}; break;
-    case"take_row2": needAction={type:"take_row2"}; break;
-    case"extra_dice":
-    case"escape_wilderness":
-    case"toll_free":
-      if(card.keepable){cur.cards=[...(cur.cards||[]),card.id];}
-      break;
-    default: break;
+    case"money":cur.money+=card.amount;break;
+    case"move_start":cur.pos=0;cur.money+=100;break;
+    case"move_wilderness":cur.pos=14;cur.inWilderness=true;cur.wildernessCount=0;break;
+    case"move_train":cur.pos=33;return{type:"train_move"};
+    case"move_offering":cur.pos=47;break;
+    case"pay_offering":cur.money-=Math.min(cur.money,card.amount);st.offeringPool=(st.offeringPool||0)+card.amount;break;
+    case"steal":return{type:"steal_land"};
+    case"take_row2":return{type:"take_row2"};
+    case"extra_dice":case"escape_wilderness":case"toll_free":if(card.keep){cur.cards=cur.cards||[];cur.cards.push(card.id);}break;
+    default:break;
   }
-  return{needAction};
+  return null;
 }
 
-window.buyLand = async function(){
-  let st=JSON.parse(JSON.stringify(gameState));
-  const cur=st.players[st.currentTurn];
-  const pos=cur.pos; const sq=SQUARES[pos];
-  if(sq.type!=="land"||st.landOwners?.[pos]||cur.money<sq.price) return;
-  cur.money-=sq.price;
-  st.landOwners={...st.landOwners,[pos]:cur.id};
-  cur.lands=[...(cur.lands||[]),pos];
-  cur.stars=(cur.stars||0)+sq.stars;
-  advanceTurn(st);
-  await set(gameRef,st);
-  await addLog(`🏡 ${cur.name}: ${sq.name} 구매! (${sq.price}만, ⭐${sq.stars})`);
-  pendingAction=null;
-};
-
-window.skipBuy = async function(){
-  let st=JSON.parse(JSON.stringify(gameState));
-  const cur=st.players[st.currentTurn];
-  advanceTurn(st);
-  await set(gameRef,st);
-  await addLog(`⏭️ ${cur.name}: 패스`);
-  pendingAction=null;
-};
-
-window.wildernessTry = function(method){
-  if(method==="double"){
-    // Roll two dice, need double
-    const d1=Math.floor(Math.random()*6)+1;
-    const d2=Math.floor(Math.random()*6)+1;
-    showDice(d1,d2);
-    processWilderness(d1===d2);
-  } else {
-    pendingAction={type:"oddeven_choice"};
-    renderActions(true,gameState.players.find(p=>p.id===myId),null);
-  }
-};
-
-window.oddevenPick = function(choice){
-  const d=Math.floor(Math.random()*6)+1;
-  const isOdd=d%2===1;
-  const won=(choice==="odd"&&isOdd)||(choice==="even"&&!isOdd);
-  showDice(d,d);
-  addLog(`🎲 ${myName}: 주사위 ${d} (${isOdd?"홀":"짝"}) — ${choice==="odd"?"홀":"짝"} 선택 → ${won?"탈출!":"실패"}`);
-  processWilderness(won);
-};
-
-async function processWilderness(escaped){
-  let st=JSON.parse(JSON.stringify(gameState));
-  const cur=st.players[st.currentTurn];
-  if(escaped){
-    cur.inWilderness=false; cur.wildernessCount=0;
-    await addLog(`🌟 ${cur.name}: 광야 탈출!`);
-    // Roll normally
-    pendingAction=null;
-    await set(gameRef,st);
-    await rollDice();
-  } else {
-    cur.wildernessCount=(cur.wildernessCount||0)+1;
-    advanceTurn(st);
-    await set(gameRef,st);
-    await addLog(`😔 ${cur.name}: 광야 탈출 실패`);
-    pendingAction=null;
-  }
-}
-
-window.confirmTrainMove = async function(){
-  const dest=parseInt(document.getElementById("train-dest").value);
-  let st=JSON.parse(JSON.stringify(gameState));
-  const cur=st.players[st.currentTurn];
-  cur.pos=dest;
-  advanceTurn(st);
-  await set(gameRef,st);
-  await addLog(`🚂 ${cur.name}: ${SQUARES[dest].name}으로 이동!`);
-  pendingAction=null;
-};
-
-window.stealLand = async function(fromId,pos){
-  let st=JSON.parse(JSON.stringify(gameState));
-  const cur=st.players[st.currentTurn];
-  const from=st.players.find(p=>p.id===fromId);
-  if(!from||!from.lands.includes(pos)) return;
-  // Transfer land
-  from.lands=from.lands.filter(p=>p!==pos);
-  from.stars=Math.max(0,from.stars-(SQUARES[pos].stars||0));
-  cur.lands=[...(cur.lands||[]),pos];
-  cur.stars=(cur.stars||0)+(SQUARES[pos].stars||0);
-  st.landOwners={...st.landOwners,[pos]:cur.id};
-  advanceTurn(st);
-  await set(gameRef,st);
-  await addLog(`👊 ${cur.name}: ${from.name}의 ${SQUARES[pos].name} 획득!`);
-  pendingAction=null;
-};
-
-window.takeRow2Land = async function(pos){
-  let st=JSON.parse(JSON.stringify(gameState));
-  const cur=st.players[st.currentTurn];
-  const sq=SQUARES[pos];
-  // Free land
-  cur.lands=[...(cur.lands||[]),pos];
-  cur.stars=(cur.stars||0)+sq.stars;
-  st.landOwners={...st.landOwners,[pos]:cur.id};
-  advanceTurn(st);
-  await set(gameRef,st);
-  await addLog(`🗺️ ${cur.name}: 2열 ${sq.name} 획득!`);
-  pendingAction=null;
-};
-
-function advanceTurn(st){
-  st.currentTurn=(st.currentTurn+1)%st.players.length;
-}
-
-function endTurn(){
-  pendingAction=null;
-  skipBuy();
-}
-
-async function addLog(msg){
-  if(!logRef) return;
-  await push(logRef, msg);
-}
-
-// ══════════════════════════════════════
-// TABS
-// ══════════════════════════════════════
-window.switchTab = function(tab){
-  ["board","info","log"].forEach(t=>{
-    document.getElementById("tc-"+t).classList.toggle("hidden",t!==tab);
-    document.getElementById("tab-"+t).classList.toggle("active",t===tab);
-  });
-};
-
-// ══════════════════════════════════════
-// MODAL
-// ══════════════════════════════════════
-function showModal(title,body,actions=""){
-  document.getElementById("modal-title").textContent=title;
-  document.getElementById("modal-body").innerHTML=body;
-  document.getElementById("modal-actions").innerHTML=actions||`<button class="btn btn-gray" onclick="closeModal()">확인</button>`;
-  document.getElementById("modal-overlay").classList.remove("hidden");
-}
-window.closeModal=function(){document.getElementById("modal-overlay").classList.add("hidden");};
-
-// ══════════════════════════════════════
-// INIT
-// ══════════════════════════════════════
-initFirebase();
-
+function advTurn(st){st.currentTurn=(st.currentTurn+1)%st.players.length;}
+function endTurn(){pa=null;var st=JSON.parse(JSON.stringify(gs));advTurn(st);gRef.set(st).then(function(){addLog("⏭️ 턴 종료");});}
+function buyL(){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];var sq=SQ[cur.pos];if(sq.type!=="land"||(st.landOwners&&st.landOwners[cur.pos])||cur.money<sq.price)return;cur.money-=sq.price;st.landOwners=st.landOwners||{};st.landOwners[cur.pos]=cur.id;cur.lands=cur.lands||[];cur.lands.push(cur.pos);cur.stars=(cur.stars||0)+sq.stars;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("🏡 "+cur.name+": "+sq.name+" 구매! ("+sq.price+"만, ⭐"+sq.stars+")");});}
+function skipB(){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];advTurn(st);pa=null;gRef.set(st).then(function(){addLog("⏭️ "+cur.name+": 패스");});}
+function wTry(m){if(m==="double"){var d1=Math.floor(Math.random()*6)+1,d2=Math.floor(Math.random()*6)+1;showD(d1,d2);addLog("🎲 더블 도전 "+d1+"+"+d2+(d1===d2?" → 탈출!":" → 실패"));procW(d1===d2);}else{pa={type:"oddeven_choice"};renderActions(true,gs.players.find(function(p){return p.id===myId;}),null);}}
+function oePick(c){var d=Math.floor(Math.random()*6)+1;var io=d%2===1;var w=(c==="odd"&&io)||(c==="even"&&!io);showD(d,d);addLog("🎲 "+d+(io?" 홀":" 짝")+" - "+(c==="odd"?"홀":"짝")+" 선택 → "+(w?"탈출!":"실패"));procW(w);}
+function procW(esc){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];if(esc){cur.inWilderness=false;cur.wildernessCount=0;pa=null;gRef.set(st).then(function(){rollDice();});}else{cur.wildernessCount=(cur.wildernessCount||0)+1;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("😔 광야 탈출 실패");});}}
+function confirmTrain(){var dest=parseInt(g("td").value);var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];cur.pos=dest;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("🚂 "+cur.name+": "+SQ[dest].name+"으로 이동!");});}
+function stealL(fid,pos){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];var fr=st.players.find(function(p){return p.id===fid;});if(!fr)return;fr.lands=(fr.lands||[]).filter(function(p){return p!==pos;});fr.stars=Math.max(0,(fr.stars||0)-(SQ[pos].stars||0));cur.lands=cur.lands||[];cur.lands.push(pos);cur.stars=(cur.stars||0)+(SQ[pos].stars||0);st.landOwners=st.landOwners||{};st.landOwners[pos]=cur.id;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("👊 "+cur.name+": "+fr.name+"의 "+SQ[pos].name+" 획득!");});}
+function takeR2(pos){var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];var sq=SQ[pos];cur.lands=cur.lands||[];cur.lands.push(pos);cur.stars=(cur.stars||0)+sq.stars;st.landOwners=st.landOwners||{};st.landOwners[pos]=cur.id;advTurn(st);pa=null;gRef.set(st).then(function(){addLog("🗺️ "+cur.name+": 2열 "+sq.name+" 획득!");});}
+function addLog(msg){if(lRef)lRef.push(msg);}
 </script>
 </body>
 </html>
