@@ -132,177 +132,6 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;overflow:hidden;back
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#1c2128;border:1px solid #30363d;border-radius:20px;padding:8px 18px;font-size:13px;color:#e6edf3;z-index:300;white-space:nowrap;animation:toastIn .3s ease;pointer-events:none}
 @keyframes toastIn{from{opacity:0;top:70px}to{opacity:1;top:80px}}
 
-/* ── ISOMETRIC BOARD ── */
-.iso-board{
-  padding: 8px 4px 16px;
-  user-select: none;
-}
-.iso-row{
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  padding: 0 4px;
-  margin-bottom: 0;
-  position: relative;
-}
-/* 홀수 행은 오른쪽 정렬 (S자 효과) */
-.iso-row:nth-child(odd){ justify-content: flex-start; }
-.iso-row:nth-child(even){ justify-content: flex-start; }
-
-/* 아이소메트릭 타일 */
-.iso-tile{
-  position: relative;
-  width: 54px;
-  margin: 2px 2px 16px;
-  cursor: pointer;
-  transition: transform .15s;
-  flex-shrink: 0;
-}
-.iso-tile:active{ transform: scale(.93); }
-
-/* 타일 윗면 */
-.tile-top{
-  position: relative;
-  width: 54px;
-  min-height: 54px;
-  border-radius: 10px 10px 6px 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 3px 3px;
-  z-index: 2;
-  border: 2px solid transparent;
-  box-shadow: 0 2px 0 transparent;
-}
-/* 타일 왼쪽 면 (입체감) */
-.tile-left{
-  position: absolute;
-  bottom: -8px; left: 0;
-  width: 8px; height: 8px;
-  border-radius: 0 0 0 4px;
-  z-index: 1;
-  transform-origin: top right;
-  transform: skewY(45deg);
-}
-/* 타일 오른쪽 면 (입체감) */
-.tile-right{
-  position: absolute;
-  bottom: -8px; right: 0;
-  width: calc(100% - 8px); height: 8px;
-  border-radius: 0 0 4px 0;
-  z-index: 1;
-  transform-origin: top left;
-  transform: skewY(-5deg);
-}
-
-/* 타일 색상 종류 */
-.t-land .tile-top{ background:#1e2a3a; border-color:#2a3a4a; box-shadow:0 4px 0 #0a1520; }
-.t-land .tile-left{ background:#0a1520; }
-.t-land .tile-right{ background:#132030; }
-
-.t-mine .tile-top{ background:#0d2a14; border-color:#2ecc71; box-shadow:0 4px 0 #063010; }
-.t-mine .tile-left{ background:#063010; }
-.t-mine .tile-right{ background:#0d2014; }
-
-.t-other .tile-top{ background:#0d1a30; border-color:#3498db; box-shadow:0 4px 0 #061020; }
-.t-other .tile-left{ background:#061020; }
-.t-other .tile-right{ background:#0d1530; }
-
-.t-key .tile-top{ background:#2a2210; border-color:#c89020; box-shadow:0 4px 0 #100e04; }
-.t-key .tile-left{ background:#100e04; }
-.t-key .tile-right{ background:#1e1a08; }
-
-.t-wild .tile-top{ background:#2a1808; border-color:#e67e22; box-shadow:0 4px 0 #100800; }
-.t-wild .tile-left{ background:#100800; }
-.t-wild .tile-right{ background:#1e1008; }
-
-.t-train .tile-top{ background:#082a2a; border-color:#1abc9c; box-shadow:0 4px 0 #041414; }
-.t-train .tile-left{ background:#041414; }
-.t-train .tile-right{ background:#081e1e; }
-
-.t-offer .tile-top{ background:#2a0a1a; border-color:#e91e8c; box-shadow:0 4px 0 #100408; }
-.t-offer .tile-left{ background:#100408; }
-.t-offer .tile-right{ background:#1e0810; }
-
-.t-start .tile-top{ background:#1a2a0a; border-color:#f0c040; box-shadow:0 4px 0 #0a1400; }
-.t-start .tile-left{ background:#0a1400; }
-.t-start .tile-right{ background:#142008; }
-
-/* 현재 위치 - 골드 글로우 */
-.t-here .tile-top{
-  border-color: #f0c040 !important;
-  box-shadow: 0 4px 0 #806000, 0 0 16px #f0c04060 !important;
-  animation: tileGlow 1.2s ease-in-out infinite alternate;
-}
-@keyframes tileGlow{
-  from{ box-shadow: 0 4px 0 #806000, 0 0 10px #f0c04040; }
-  to{ box-shadow: 0 4px 0 #806000, 0 0 22px #f0c040a0; }
-}
-
-/* 타일 텍스트 */
-.t-name{ font-size:9px; font-weight:700; color:#e6edf3; text-align:center; line-height:1.2; margin-bottom:1px; }
-.t-price{ font-size:8px; color:#4fc3f7; font-weight:700; }
-.t-stars{ font-size:7px; color:#ffd700; }
-.t-icon{ font-size:18px; margin-bottom:1px; }
-.t-owner{ position:absolute; top:2px; right:2px; font-size:9px; }
-.t-num{ position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:8px; color:#4a5568; font-weight:700; }
-
-/* 말(Pawn) */
-.pawn-wrap{
-  position: absolute;
-  top: -14px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 1px; flex-wrap: wrap; justify-content: center;
-  z-index: 10;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.8));
-}
-.pawn{
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--pc);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px;
-  border: 2px solid rgba(255,255,255,.4);
-  box-shadow: 0 2px 6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.3);
-  animation: pawnBob 2s ease-in-out infinite;
-}
-@keyframes pawnBob{
-  0%,100%{ transform: translateY(0); }
-  50%{ transform: translateY(-3px); }
-}
-.t-here .pawn{ animation: pawnBob 0.6s ease-in-out infinite; }
-
-/* S자 연결 화살표 */
-.iso-connector{
-  text-align: center;
-  font-size: 18px;
-  color: #f0c04080;
-  margin: -4px 0 -4px;
-  padding: 0 8px;
-}
-.iso-conn-right{ text-align: right; padding-right: 16px; }
-.iso-conn-left{ text-align: left; padding-left: 16px; }
-
-.iso-section-hdr{
-  font-size: 11px;
-  font-weight: 900;
-  color: #f0c040;
-  letter-spacing: 0.5px;
-  padding: 10px 8px 2px;
-  border-bottom: 1px solid #2a3040;
-  margin-bottom: 6px;
-}
-
-/* 말 이동 애니메이션 오버레이 */
-.pawn-moving{
-  position: fixed;
-  font-size: 28px;
-  z-index: 500;
-  pointer-events: none;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,.8));
-  transition: top .28s cubic-bezier(.4,0,.2,1), left .28s cubic-bezier(.4,0,.2,1);
-}
-
 /* MOVE ANIMATION */
 .player-move-indicator{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;z-index:150;animation:moveAni .4s ease-out forwards;pointer-events:none}
 @keyframes moveAni{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-80%) scale(1.5)}}
@@ -691,7 +520,6 @@ function renderBoard(me){
   var own=gs.landOwners||{},bp={};
   gs.players.forEach(function(p){if(!p.bankrupt)(bp[p.pos]=bp[p.pos]||[]).push(p);});
 
-  // 플레이어 칩 요약
   var chips="<div class='pchips'>"+gs.players.map(function(p){
     var isCur=gs.players[gs.currentTurn]&&gs.players[gs.currentTurn].id===p.id;
     var isMe=p.id===myId;
@@ -703,104 +531,47 @@ function renderBoard(me){
       +"</div>";
   }).join("")+"</div>";
 
-  // ── S자 아이소메트릭 보드 ──
-  // 각 행마다 방향이 바뀌는 S자 배치 (한 행 = 8칸)
-  var ROW_SIZE = 8;
-  // 섹션 경계 정의: [시작id, 끝id, 라벨]
-  var SECTIONS = [
-    [0,0,"🕊️ 시작"],
-    [1,13,"1️⃣ 1열"],
-    [14,14,"🏜️ 광야"],
-    [15,32,"2️⃣ 2열"],
-    [33,33,"🚂 구원열차"],
-    [34,46,"3️⃣ 3열"],
-    [47,47,"💌 헌금"],
-    [48,64,"4️⃣ 4열"]
-  ];
-  function getSectionLabel(id){
-    for(var s=0;s<SECTIONS.length;s++){if(id>=SECTIONS[s][0]&&id<=SECTIONS[s][1])return SECTIONS[s][2];}
-    return "";
+  // 섹션별 그룹핑
+  var sections={};
+  SQ.forEach(function(s){(sections[s.section]=sections[s.section]||[]).push(s);});
+
+  function sqHtml(s){
+    var h=bp[s.id]||[];
+    var op=own[s.id]?gs.players.find(function(p){return p.id===own[s.id];}):null;
+    var isMine=op&&op.id===myId,isOther=op&&!isMine;
+    var isHere=h.some(function(p){return p.id===myId;});
+    var cls="sq-item "+
+      (s.type==="land"?"land"+(isMine?" mine":isOther?" others":""):
+       s.type==="key"?"key-sq":"special")+
+      (isHere?" me-here":"");
+    var playerDots=h.map(function(p){return"<span>"+p.emoji+"</span>";}).join("");
+    var right="";
+    if(s.type==="land"){
+      right="<div class='sq-right'>"
+        +(op?"<div class='sq-owner2'>"+op.emoji+"</div>":"")
+        +"<div class='sq-price2'>💰"+s.price+"만</div>"
+        +"<div class='sq-toll2'>🚶"+s.toll+"만</div>"
+        +"<div class='sq-stars2'>"+"★".repeat(Math.min(s.stars,5))+"</div>"
+        +"</div>";
+    }
+    return"<div class='"+cls+"'>"
+      +"<span class='sq-num'>"+s.id+"</span>"
+      +"<span class='sq-icon2'>"+(s.type==="land"?"🏛️":(s.icon||""))+"</span>"
+      +"<div class='sq-info'><div class='sq-name2'>"+s.name+"</div><div class='sq-desc'>"+s.desc+"</div></div>"
+      +right
+      +(playerDots?"<div class='sq-players2'>"+playerDots+"</div>":"")
+      +"</div>";
   }
 
-  var board = "<div class='iso-board'>";
+  var sectionOrder=["특수","1열","2열","3열","4열"];
+  var boardHtml=sectionOrder.map(function(sec){
+    if(!sections[sec])return"";
+    return"<div class='section-hdr'>"+sec+"</div>"+sections[sec].map(sqHtml).join("");
+  }).join("");
 
-  var prevSection = "";
-  for(var rowIdx = 0; rowIdx < Math.ceil(TOTAL/ROW_SIZE); rowIdx++){
-    var start = rowIdx * ROW_SIZE;
-    var end = Math.min(start + ROW_SIZE, TOTAL);
-    var rowSqs = [];
-    for(var i=start;i<end;i++) rowSqs.push(SQ[i]);
-    // 짝수 행: 좌→우, 홀수 행: 우→좌
-    var reversed = rowIdx % 2 === 1;
-    var displaySqs = reversed ? rowSqs.slice().reverse() : rowSqs;
-
-    // 섹션 헤더
-    var firstId = rowIdx * ROW_SIZE;
-    var secLabel = getSectionLabel(firstId);
-    if(secLabel && secLabel !== prevSection){
-      board += "<div class='iso-section-hdr'>"+secLabel+"</div>";
-      prevSection = secLabel;
-    }
-    board += "<div class='iso-row' style='--row:"+rowIdx+"'>";
-    displaySqs.forEach(function(s, colIdx){
-      var h = bp[s.id]||[];
-      var op = own[s.id] ? gs.players.find(function(p){return p.id===own[s.id];}) : null;
-      var isMine = op&&op.id===myId;
-      var isOther = op&&op.id!==myId;
-      var isHere = h.some(function(p){return p.id===myId;});
-      var allHere = h.length>0;
-
-      var tileClass = "iso-tile";
-      if(s.type==="land"){
-        if(isMine) tileClass+=" t-mine";
-        else if(isOther) tileClass+=" t-other";
-        else tileClass+=" t-land";
-      } else if(s.type==="key") tileClass+=" t-key";
-      else if(s.type==="wilderness") tileClass+=" t-wild";
-      else if(s.type==="train") tileClass+=" t-train";
-      else if(s.type==="offering") tileClass+=" t-offer";
-      else if(s.type==="start") tileClass+=" t-start";
-      if(isHere) tileClass+=" t-here";
-
-      var nm = s.name.length>5 ? s.name.slice(0,5) : s.name;
-      var priceHtml = s.type==="land" ? "<div class='t-price'>"+s.price+"만</div>" : "";
-      var starsHtml = s.type==="land" ? "<div class='t-stars'>"+"★".repeat(Math.min(s.stars,4))+"</div>" : "";
-      var iconHtml = s.type!=="land" ? "<div class='t-icon'>"+(s.icon||"")+"</div>" : "";
-      var ownerHtml = op ? "<div class='t-owner'>"+op.emoji+"</div>" : "";
-
-      // 플레이어 말들
-      var pawns = h.map(function(p){
-        return "<div class='pawn' style='--pc:"+p.color+"'>"+p.emoji+"</div>";
-      }).join("");
-
-      board += "<div class='"+tileClass+"' style='--col:"+colIdx+"'>"
-        + "<div class='tile-top'>"
-        + iconHtml
-        + "<div class='t-name'>"+nm+"</div>"
-        + priceHtml + starsHtml + ownerHtml
-        + "</div>"
-        + "<div class='tile-left'></div>"
-        + "<div class='tile-right'></div>"
-        + (pawns ? "<div class='pawn-wrap'>"+pawns+"</div>" : "")
-        + "<div class='t-num'>"+s.id+"</div>"
-        + "</div>";
-    });
-    board += "</div>"; // iso-row
-
-    // 행 연결 꺾임 표시 (마지막 행 제외)
-    if(rowIdx < Math.ceil(TOTAL/ROW_SIZE)-1){
-      var connDir = rowIdx%2===0 ? "right" : "left";
-      board += "<div class='iso-connector iso-conn-"+connDir+"'>↓</div>";
-    }
-  }
-  board += "</div>"; // iso-board
-
-  g("tb").innerHTML = chips + board;
+  g("tb").innerHTML=chips+boardHtml;
   // 내 위치로 스크롤
-  setTimeout(function(){
-    var el = g("tb").querySelector(".t-here");
-    if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
-  },150);
+  setTimeout(function(){var el=g("tb").querySelector(".me-here");if(el)el.scrollIntoView({behavior:"smooth",block:"center"});},100);
 }
 
 function renderInfo(me){
@@ -989,56 +760,23 @@ function rollDice(){
   },800);
 }
 
-function animateMove(fromPos, toPos, emoji, callback){
-  if(fromPos === toPos){ callback(); return; }
-  var steps = [];
-  var cur = fromPos;
-  while(cur !== toPos){ cur = (cur+1)%TOTAL; steps.push(cur); }
-  if(!steps.length){ callback(); return; }
-
-  // 이동할 말 오버레이 생성
-  var pawnEl = document.createElement("div");
-  pawnEl.className = "pawn-moving";
-  pawnEl.textContent = emoji;
-  pawnEl.style.fontSize = "26px";
-  document.body.appendChild(pawnEl);
-
-  // 시작 타일 위치 계산
-  function getTileCenter(pos){
-    var tiles = document.querySelectorAll(".iso-tile");
-    for(var i=0;i<tiles.length;i++){
-      var num = tiles[i].querySelector(".t-num");
-      if(num && parseInt(num.textContent)===pos){
-        var r = tiles[i].getBoundingClientRect();
-        return { x: r.left + r.width/2, y: r.top + r.height/2 };
-      }
-    }
-    return null;
+function animateMove(fromPos,toPos,emoji,callback){
+  var steps=[];
+  var cur=fromPos;
+  while(cur!==toPos){cur=(cur+1)%TOTAL;steps.push(cur);}
+  if(!steps.length){callback();return;}
+  var i=0;
+  function step(){
+    if(i>=steps.length){callback();return;}
+    var pos=steps[i++];
+    // 잠깐 표시
+    var div=document.createElement("div");div.className="player-move-indicator";div.textContent=emoji;
+    document.body.appendChild(div);setTimeout(function(){if(div.parentNode)div.parentNode.removeChild(div);},380);
+    // 토스트로 현재 위치 표시
+    showToast(emoji+" → "+SQ[pos].name,600);
+    setTimeout(step,350);
   }
-
-  var startPos = getTileCenter(fromPos);
-  if(startPos){
-    pawnEl.style.left = (startPos.x - 14) + "px";
-    pawnEl.style.top = (startPos.y - 28) + "px";
-  }
-
-  var stepIdx = 0;
-  function nextStep(){
-    if(stepIdx >= steps.length){
-      if(pawnEl.parentNode) pawnEl.parentNode.removeChild(pawnEl);
-      callback();
-      return;
-    }
-    var pos = steps[stepIdx++];
-    var center = getTileCenter(pos);
-    if(center){
-      pawnEl.style.left = (center.x - 14) + "px";
-      pawnEl.style.top = (center.y - 32) + "px";
-    }
-    showToast(emoji + " → " + SQ[pos].name, 500);
-    setTimeout(nextStep, 300);
-  }
-  setTimeout(nextStep, 50);
+  setTimeout(step,100);
 }
 
 function showToast(msg,duration){
