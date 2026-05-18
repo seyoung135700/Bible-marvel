@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="성경마블">
 <meta name="theme-color" content="#0d1117">
 <link rel="manifest" id="manifest-placeholder">
-<title>성경마블 Online</title>
+<title>성경마블 v6</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -633,6 +633,16 @@ function enterGame(){
     if(gs.lastDice&&gs.lastDice.playerId!==myId){
       if(!prev||!prev.lastDice||prev.lastDice.ts!==gs.lastDice.ts)showOppDice(gs.lastDice);
     }
+    // 상대방 말 이동 애니메이션
+    if(gs.lastMove&&gs.lastMove.playerId!==myId){
+      if(!prev||!prev.lastMove||prev.lastMove.ts!==gs.lastMove.ts){
+        var lm=gs.lastMove;
+        // 잠깐 후 렌더링 + 애니메이션
+        renderGame();updateTimer();updateBagBtn();
+        animateMoveOpp(lm.from,lm.to,lm.emoji,lm.name);
+        return;
+      }
+    }
     renderGame();updateTimer();updateBagBtn();
   });
   lRef.on("value",function(snap){
@@ -989,6 +999,50 @@ function rollDice(){
   },800);
 }
 
+function animateMoveOpp(fromPos, toPos, emoji, name){
+  // 상대방 말 이동 - 자동 스크롤 포함
+  showToast(emoji+" "+name+"이(가) 이동 중...", 1000);
+  var steps=[];
+  var cur=fromPos;
+  while(cur!==toPos){cur=(cur+1)%TOTAL;steps.push(cur);}
+  if(!steps.length)return;
+
+  var pawnEl=document.createElement("div");
+  pawnEl.className="pawn-moving";
+  pawnEl.textContent=emoji;
+  pawnEl.style.fontSize="26px";
+  document.body.appendChild(pawnEl);
+
+  function getTileCenter(pos){
+    var tiles=document.querySelectorAll(".iso-tile");
+    for(var i=0;i<tiles.length;i++){
+      var num=tiles[i].querySelector(".t-num");
+      if(num&&parseInt(num.textContent)===pos){
+        var r=tiles[i].getBoundingClientRect();
+        return{x:r.left+r.width/2,y:r.top+r.height/2,el:tiles[i]};
+      }
+    }
+    return null;
+  }
+
+  var startC=getTileCenter(fromPos);
+  if(startC){pawnEl.style.left=(startC.x-14)+"px";pawnEl.style.top=(startC.y-32)+"px";}
+
+  var si=0;
+  function nextStep(){
+    if(si>=steps.length){if(pawnEl.parentNode)pawnEl.parentNode.removeChild(pawnEl);return;}
+    var pos=steps[si++];
+    var center=getTileCenter(pos);
+    if(center){
+      pawnEl.style.left=(center.x-14)+"px";pawnEl.style.top=(center.y-32)+"px";
+      // 자동 스크롤
+      center.el.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+    setTimeout(nextStep,300);
+  }
+  setTimeout(nextStep,50);
+}
+
 function animateMove(fromPos, toPos, emoji, callback){
   if(fromPos === toPos){ callback(); return; }
   var steps = [];
@@ -1071,6 +1125,9 @@ function procTurn(d1,d2){
     else{cur.money+=50;logs.push("💰 "+cur.name+": 시작 통과 +50만원");}
   }
 
+  // Firebase에 내 이동 저장 (상대방 표시용)
+  var moveData={from:oldPos,to:np,playerId:myId,emoji:cur.emoji,name:cur.name,ts:Date.now()};
+
   // 한 칸씩 이동 애니메이션 후 처리
   animateMove(oldPos,np,cur.emoji,function(){
     cur.pos=np;var sq=SQ[np];
@@ -1104,28 +1161,51 @@ function procTurn(d1,d2){
       pa={type:"train_move"};need=true;st.needAction=true;logs.push("🚂 "+cur.name+": 구원열차!");
     } else if(sq.type==="offering"){
       var pl2=st.offeringPool||0;
-      if(cur.money>=100){cur.money-=100;st.offeringPool=pl2+100;logs.push("💌 헌금 100만원");}
-      else if(cur.money>=50){cur.money-=50;st.offeringPool=pl2+50;logs.push("💌 헌금 50만원");}
-      if(pl2>0){cur.money+=pl2;st.offeringPool=0;logs.push("💝 헌금 풀 "+pl2+"만원 획득!");}
+      // 먼저 기존 풀이 있으면 가져감 (내기 전에 체크)
+      if(pl2>0){
+        cur.money+=pl2;st.offeringPool=0;
+        logs.push("💝 "+cur.name+": 헌금 풀 "+pl2+"만원 획득!");
+      }
+      // 그 다음 헌금 납부
+      if(cur.money>=100){cur.money-=100;st.offeringPool=(st.offeringPool||0)+100;logs.push("💌 "+cur.name+": 사랑의 헌금 100만원 납부");}
+      else if(cur.money>=50){cur.money-=50;st.offeringPool=(st.offeringPool||0)+50;logs.push("💌 "+cur.name+": 사랑의 헌금 50만원 납부");}
+      else{logs.push("💌 "+cur.name+": 헌금할 돈이 부족합니다");}
     } else if(sq.type==="start"){cur.money+=100;logs.push("🏠 시작/마침 정착 +100만원");}
 
     if(!need&&!isD)advTurn(st);
     else if(!need&&isD)logs.push("🎯 더블! "+cur.name+" 한 번 더 굴리세요!");
+    st.lastMove=moveData;
     gRef.set(st).then(function(){logs.forEach(addLog);});
   });
 }
 
 function showKC(card,needAction){
-  // 카드 뒤집기 애니메이션
-  var html="<div class='card-flip-wrap'><div class='card-flip' id='cflip'>"
-    +"<div class='card-face card-front'><div class='card-key-icon'>🔑</div><div style='color:#a07820;font-size:12px;margin-top:4px'>눌러서 확인</div></div>"
-    +"<div class='card-face card-back'><div style='font-size:32px'>"+card.icon+"</div><div class='card-back-text'>"+card.text+"</div></div>"
-    +"</div></div>"
-    +(card.keep?"<div style='text-align:center;color:#4fc3f7;font-size:11px;margin-bottom:8px'>📦 가방에 보관됩니다</div>":"");
-  showModal("🔑 천국열쇠 카드",html,"<button class='btn gold bsm' onclick='closeModal()'>확인</button>");
-  setTimeout(function(){var cf=g("cflip");if(cf)cf.classList.add("flipped");},400);
-  // 카드 클릭으로도 뒤집기
-  setTimeout(function(){var cf=g("cflip");if(cf)cf.onclick=function(){cf.classList.add("flipped");};},100);
+  // 카드 앞면만 보여주고 직접 눌러야 뒤집힘
+  var html="<div style='text-align:center;color:#8b949e;font-size:12px;margin-bottom:10px'>카드를 눌러서 확인하세요!</div>"
+    +"<div class='card-flip-wrap' onclick='flipCard(this)' style='cursor:pointer'>"
+    +"<div class='card-flip' id='cflip'>"
+    +"<div class='card-face card-front'>"
+    +"<div class='card-key-icon'>🔑</div>"
+    +"<div style='color:#c89020;font-size:11px;margin-top:6px;font-weight:700'>TAP TO REVEAL</div>"
+    +"<div style='font-size:9px;color:#8b949e;margin-top:3px'>천국열쇠</div>"
+    +"</div>"
+    +"<div class='card-face card-back'>"
+    +"<div style='font-size:36px;margin-bottom:6px'>"+card.icon+"</div>"
+    +"<div class='card-back-text'>"+card.text+"</div>"
+    +(card.keep?"<div style='margin-top:8px;color:#4fc3f7;font-size:10px;font-weight:700'>📦 가방에 보관됩니다</div>":"")
+    +"</div></div></div>";
+  showModal("🔑 천국열쇠 카드",html,"<button class='btn gold bsm' id='kc-confirm-btn' onclick='closeModal()' style='display:none'>확인</button>");
+}
+
+function flipCard(wrap){
+  var cf=wrap.querySelector('.card-flip');
+  if(!cf||cf.classList.contains('flipped'))return;
+  cf.classList.add('flipped');
+  // 뒤집힌 후 확인 버튼 표시
+  setTimeout(function(){
+    var btn=g('kc-confirm-btn');
+    if(btn)btn.style.display='block';
+  },650);
 }
 
 function applyC(st,cur,card){
@@ -1220,7 +1300,12 @@ function payToll(){
   var toll=pa.toll;
   var paid=Math.min(cur.money,toll);
   cur.money-=paid;if(owP)owP.money+=paid;
-  addLog("💸 "+cur.name+"→"+(owP?owP.name:"")+" 통행료 "+toll+"만원");
+  var msg="💸 "+cur.name+" → "+(owP?owP.name:"")+": 통행료 "+paid+"만원 지불";
+  addLog(msg);
+  // 통행료 받은 사람에게 알림 (내가 땅 주인이면)
+  if(owP&&owP.id===myId){
+    showToast("💰 "+cur.name+"에게서 통행료 "+paid+"만원을 받았습니다!", 3000);
+  }
   pa=null;st.needAction=false;advTurn(st);
   gRef.set(st).then(function(){checkBankrupt(cur.id);});
 }
@@ -1282,12 +1367,41 @@ function confirmTrain(){
   var dest=parseInt(g("td").value);
   var st=JSON.parse(JSON.stringify(gs));var cur=st.players[st.currentTurn];
   cur.pos=dest;pa=null;
-  // 도착한 칸이 땅이면 구매 기회
   var sq=SQ[dest];
   var own=st.landOwners||{};
-  if(sq.type==="land"&&!own[dest]){st.needAction=true;}
-  else{advTurn(st);}
-  gRef.set(st).then(function(){addLog("🚂 "+cur.name+": "+sq.name+"으로 이동!");});
+  var logs=[];
+  logs.push("🚂 "+cur.name+": "+sq.name+"으로 이동!");
+
+  if(sq.type==="land"&&!own[dest]){
+    // 빈 땅 - 구매 기회
+    st.needAction=true;
+  } else if(sq.type==="key"){
+    // 천국열쇠 카드 뽑기
+    var dk=st.keyDeck||[];if(!dk.length)dk=shuf(KC.map(function(c){return c.id;}));
+    var cid=dk.shift();st.keyDeck=dk;
+    var card=KC.find(function(c){return c.id===cid;});
+    logs.push("🔑 "+cur.name+": 천국열쇠 카드!");
+    var res=applyC(st,cur,card);
+    if(res){pa=res;st.needAction=true;}
+    else{advTurn(st);}
+    gRef.set(st).then(function(){logs.forEach(addLog);showKC(card,res);});
+    return;
+  } else if(sq.type==="offering"){
+    // 헌금 칸
+    var pl2=st.offeringPool||0;
+    if(pl2>0){cur.money+=pl2;st.offeringPool=0;logs.push("💝 헌금 풀 "+pl2+"만원 획득!");}
+    if(cur.money>=100){cur.money-=100;st.offeringPool=(st.offeringPool||0)+100;logs.push("💌 헌금 100만원");}
+    else if(cur.money>=50){cur.money-=50;st.offeringPool=(st.offeringPool||0)+50;logs.push("💌 헌금 50만원");}
+    advTurn(st);
+  } else if(sq.type==="wilderness"){
+    if(!cur.inWilderness){cur.inWilderness=true;cur.wildernessCount=0;logs.push("🏜️ 광야에 갇혔습니다!");}
+    advTurn(st);
+  } else if(sq.type==="start"){
+    cur.money+=100;logs.push("🏠 시작/마침 +100만원");advTurn(st);
+  } else {
+    advTurn(st);
+  }
+  gRef.set(st).then(function(){logs.forEach(addLog);});
 }
 
 function stealL(fid,pos){
