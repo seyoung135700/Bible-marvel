@@ -35,7 +35,7 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;overflow:hidden;back
 .inp:focus{border-color:#f0c040}
 .inp::placeholder{color:#8b949e}
 
-/* 캐릭터 선택 슬롯 디자인 */
+/* 캐릭터 선택 슬롯 CSS */
 .char-selector {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -60,11 +60,10 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;overflow:hidden;back
   width: 40px;
   height: 40px;
   margin: 0 auto 4px;
-  background-image: url('https://i.imgur.com/kP1oP7o.png'); /* 업로드 하신 이미지 스프라이트화 */
+  background-image: url('https://i.imgur.com/kP1oP7o.png');
   background-size: 200px 200px;
-  image-rendering: pixelated; /* 도트 그래픽 깨짐 방지 */
+  image-rendering: pixelated; /* 도트 깨짐 방지 */
 }
-/* 첫 줄 캐릭터 5종 스프라이트 X 좌표값 오프셋 */
 .sprite-david { background-position: 0px 0px; }
 .sprite-moses { background-position: -40px 0px; }
 .sprite-joshua { background-position: -80px 0px; }
@@ -80,7 +79,7 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;overflow:hidden;back
   color: #f0c040;
 }
 
-/* 실제 인게임 보드판/칩 내에 들어갈 도트 말 크기 설정 */
+/* 실제 인게임 보드판 내 말 크기 설정 */
 .pawn-circle {
   width: 24px;
   height: 24px;
@@ -128,12 +127,6 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;overflow:hidden;back
 .die.rolling{animation:dr .5s ease-in-out infinite alternate}
 @keyframes dr{0%{transform:rotate(-15deg) scale(.9)}100%{transform:rotate(15deg) scale(1.1)}}
 .dbl-badge{background:#f0c040;color:#1a1a2e;font-size:12px;font-weight:900;padding:2px 12px;border-radius:20px;display:inline-block;margin-bottom:4px}
-.card-flip-wrap{perspective:600px;width:190px;margin:0 auto 10px;height:125px;cursor:pointer}
-.card-flip{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s ease}
-.card-flip.flipped{transform:rotateY(180deg)}
-.card-face{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;padding:12px}
-.card-front{background:linear-gradient(135deg,#2a2010,#1a1508);border:2px solid #a07820}
-.card-back{background:linear-gradient(135deg,#1a2a3a,#0a1a2a);border:2px solid #4a7090;transform:rotateY(180deg)}
 
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#1c2128;border:1px solid #30363d;border-radius:20px;padding:7px 16px;font-size:12px;color:#e6edf3;z-index:300;pointer-events:none;max-width:88vw;text-align:center;animation:tin .3s ease}
 @keyframes tin{from{opacity:0;top:70px}to{opacity:1;top:80px}}
@@ -143,9 +136,6 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;overflow:hidden;back
 .bag-btn{position:fixed;bottom:80px;right:16px;background:#9b59b6;border:none;border-radius:50%;width:48px;height:48px;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:50;display:none;align-items:center;justify-content:center}
 .bag-count{position:absolute;top:-2px;right:-2px;background:#e74c3c;color:#fff;font-size:9px;font-weight:900;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center}
 .opp-dice{background:#1c2128;border:1px solid #30363d;border-radius:10px;padding:7px 10px;margin-bottom:6px;display:flex;align-items:center;gap:8px;font-size:12px}
-.rank-card{background:#1c2128;border-radius:12px;padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:10px;border:1px solid #30363d}
-.spin{display:inline-block;width:18px;height:18px;border:2px solid #30363d;border-top-color:#f0c040;border-radius:50%;animation:sp .7s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
 .shdr{font-size:10px;font-weight:900;color:#f0c040;letter-spacing:.5px;padding:8px 4px 3px;border-bottom:1px solid #2a3040;margin-bottom:5px}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:#30363d;border-radius:4px}
@@ -157,7 +147,7 @@ html,body{height:100%;font-family:'Noto Sans KR',sans-serif;overflow:hidden;back
 <div id="lobby">
   <div class="logo">📖</div>
   <div class="ttl">성경마블</div>
-  <div class="sub">Bible Marble Online · 최대 6인</div>
+  <div class="sub">Bible Marble Online · 캐릭터 에디션</div>
   <div class="lbtns">
     <button class="btn gold" onclick="showSetup('create')">🏠 방 만들기</button>
     <button class="btn bblue" onclick="showSetup('join')">🚪 방 참가하기</button>
@@ -350,17 +340,17 @@ var KC=[
   {id:11,text:"사랑의 헌금 100만원",type:"pay_offering",amount:100,keep:false,icon:"💸"},
   {id:12,text:"광야로 이동!\n예수님의 삶을 깊이 체험하세요",type:"move_wilderness",keep:false,icon:"🏜️"},
   {id:13,text:"사랑의 헌금 50만원",type:"pay_offering",amount:50,keep:false,icon:"💸"},
-  {id:14,text:"꽝! 🙅\n\"구하여도 받지 못함은\n정욕으로 쓰려고 잘못 구하기\n때문이라\"\n크게 낭독하세요!",type:"blank",keep:false,icon:"🙅"},
+  {id:14,text:"꽝! 🙅\n\"구하여도 받지 못함은 정욕으로 쓰려고 잘못 구하기 때문이라\"\n크게 낭독하세요!",type:"blank",keep:false,icon:"🙅"},
   {id:15,text:"광야 즉시 탈출!(보관 가능)",type:"escape_wilderness",keep:true,icon:"🌟"},
   {id:16,text:"구원열차로 이동!",type:"move_train",keep:false,icon:"🚂"},
-  {id:17,text:"꽝! 🙅\n\"남에게 대접받고 싶은 대로\n너희도 남을 대접하라\"\n크게 낭독하세요!",type:"blank",keep:false,icon:"🙅"}
+  {id:17,text:"꽝! 🙅\n\"남에게 대접받고 싶은 대로 너희도 남을 대접하라\"\n크게 낭독하세요!",type:"blank",keep:false,icon:"🙅"}
 ];
 
 var DF=["","⚀","⚁","⚂","⚃","⚄","⚅"];
 var CL=["#E74C3C","#3498DB","#2ECC71","#F39C12","#9B59B6","#1ABC9C"];
 var CNAMES=["david","moses","joshua","esther","joseph"];
 var CLABELS=["다윗","모세","여호수아","에스더","요셉"];
-var chosenChar="david"; // 기본 선택 값
+var chosenChar="david"; // 선택 캐릭터 기본값
 
 function g(id){return document.getElementById(id);}
 function cm(){return 450;}
@@ -391,11 +381,11 @@ function showScr(id){
   g(id).classList.remove("gone");g(id).style.display="flex";g(id).style.flexDirection="column";
 }
 
-// 캐릭터 수동 바인딩 함수
+// 캐릭터 선택 함수 활성화
 function selectChar(cname){
-  chosenChar=cname;
+  chosenChar = cname;
   document.querySelectorAll(".char-opt").forEach(function(opt){
-    opt.classList.toggle("selected", opt.getAttribute("data-char")===cname);
+    opt.classList.toggle("selected", opt.getAttribute("data-char") === cname);
   });
 }
 
@@ -415,13 +405,17 @@ function initFB(){
   }
 }
 
+// 플레이어 정보 생성 시 선택한 캐릭터가 정확히 바인딩되도록 수정
 function mkP(idx){
   var lblIdx = CNAMES.indexOf(chosenChar);
-  return{id:myId,name:myName,money:cm(),pos:0,lands:[],stars:0,
-    inWilderness:false,wildernessCount:0,cards:[],
+  return {
+    id:myId, name:myName, money:cm(), pos:0, lands:[], stars:0,
+    inWilderness:false, wildernessCount:0, cards:[],
     color:CL[idx],
-    charName:chosenChar,charLabel:CLABELS[lblIdx]||"성도",
-    bankrupt:false};
+    charName:chosenChar, // 선택된 영문 캐릭터 명
+    charLabel:CLABELS[lblIdx]||"성도", // 한글 이름 라벨
+    bankrupt:false
+  };
 }
 
 function showSetup(m){
@@ -613,14 +607,13 @@ function rollDice(){
   renderActions(gs.players[gs.currentTurn]);
 }
 
-// 스크롤로만 따라가는 군더더기 없는 이동 애니메이션 탑재
+// 오직 스크롤로만 타겟 칸을 찾아 따라가는 부드러운 카메라 무빙 함수 고정
 function animateMove(from, to, me2, cb) {
-  if (from === to) { cb(); return; }
   var targetEl = document.querySelector(".sq-item[data-id='" + to + "']");
   if (targetEl) {
     targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
   }
-  cb();
+  cb(); // 버벅임 유발하는 딜레이 없이 규칙 제어 콜백 즉시 호출
 }
 
 function doMove(){
